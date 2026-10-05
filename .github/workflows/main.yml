@@ -10,8 +10,9 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - run: npm init -y && npm i @capacitor/core @capacitor/cli @capacitor/android
-      - run: npx cap init "Помощник по вопросам" com.helper.qa --web-dir=www
+      - run: npx cap init "Helper" com.helper.qa --web-dir=www
       - run: node -e "const f='capacitor.config.json',c=require('./'+f);c.plugins={CapacitorHttp:{enabled:true}};require('fs').writeFileSync(f,JSON.stringify(c,null,2))"
+      - run: mkdir -p www && cp index.html www/ || true
       - run: npx cap add android && npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
