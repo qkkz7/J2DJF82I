@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Помощник по вопросам</title>
+<style>
+:root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
+:root[data-t=dark]{--bg:#141218;--sf:#1f1b26;--tx:#ece6f2;--mu:#a9a3b5;--ac:#b9a6ff;--ac2:#352c58;--ok:#6fdc9c;--er:#ffb4ab;--bd:#332e3d}
+@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#141218;--sf:#1f1b26;--tx:#ece6f2;--mu:#a9a3b5;--ac:#b9a6ff;--ac2:#352c58;--ok:#6fdc9c;--er:#ffb4ab;--bd:#332e3d}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:var(--fs)/1.45 system-ui,sans-serif;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;scroll-behavior:smooth}
+nav{display:flex;background:var(--sf);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;min-height:56px;border:0;background:none;color:var(--mu);font:inherit;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav button.on{color:var(--ac);font-weight:700}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card{background:var(--sf);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px #0002;transition:.2s}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{min-height:48px;padding:0 16px;border:0;border-radius:24px;background:var(--ac);color:#fff;font:inherit;font-weight:600}
+:root[data-t=dark] .btn{color:#1d1b20}
+.btn.s{background:var(--ac2);color:var(--ac)}
+.ib{width:48px;height:48px;border:0;border-radius:24px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
+.ib.on{background:var(--ac);color:#fff}
+input[type=search],select{width:100%;min-height:52px;border-radius:26px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 18px;font:inherit}
+input[type=search]:focus{outline:0;border-color:var(--ac)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
+.chip{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:14px}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
+.a ul{margin:0;padding-left:20px}.lb{font-size:12px;color:var(--mu);margin-top:8px}
+.bd{display:inline-block;font-size:12px;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
+mark{background:#ffd54f;color:#000;border-radius:3px}
+.mu{color:var(--mu);font-size:14px}.er{color:var(--er)}
+.bar{height:10px;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
+.sk{height:90px;border-radius:20px;background:linear-gradient(90deg,var(--sf),var(--ac2),var(--sf));background-size:200%;animation:sk 1.2s infinite;margin-bottom:12px}
+@keyframes sk{to{background-position:-200%}}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));background:#322f37;color:#fff;border-radius:14px;padding:12px 16px;opacity:0;pointer-events:none;transition:.2s;text-align:center}
+#toast.on{opacity:1}
+.sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:42px;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
+label.r{display:flex;justify-content:space-between;align-items:center;min-height:48px}
+</style></head><body>
+<main id="m"></main>
+<div id="toast"></div>
+<nav id="nav"></nav>
+<input type="file" id="file" accept=".json,application/json" hidden>
+<script>
+'use strict';
+/* ═══ storage: IndexedDB (key-value) ═══ */
+const DB=new Promise((ok,no)=>{const q=indexedDB.open('qa-helper',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>ok(q.result);q.onerror=no});
+const kvGet=async k=>{const d=await DB;return new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result)})};
+const kvSet=async(k,v)=>{const d=await DB;return new Promise(r=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=r})};
+const kvDel=async k=>{const d=await DB;return new Promise(r=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=r})};
+
+/* ═══ network ═══ */
+const SITE='https://sdo-otvety.info',JSON_URL=SITE+'/assets/questions.json';
+async function fetchText(url){ // нативный HTTP в Capacitor, иначе fetch
+  const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorHttp;
+  if(H){const r=await H.get({url,connectTimeout:20000,readTimeout:60000,responseType:'text'});if(r.status>=400)throw Error('HTTP '+r.status);return typeof r.data==='string'?r.data:JSON.stringify(r.data)}
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);
+  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.text()}finally{clearTimeout(t)}
+}
+async function fetchJsonProgress(url,cb){ // потоковое чтение, если возможно
+  if(!(window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorHttp)){
+    const r=await fetch(url);if(!r.ok)throw Error('HTTP '+r.status);
+    const tot=+r.headers.get('content-length')||0;
+    if(r.body&&r.body.getReader){const rd=r.body.getReader(),ch=[];let n=0,t0=Date.now();
+      for(;;){const{done,value}=await rd.read();if(done)break;ch.push(value);n+=value.length;cb(n,tot,n/Math.max(.1,(Date.now()-t0)/1000))}
+      return new TextDecoder().decode(await new Blob(ch).arrayBuffer())}
+    return r.text()}
+  cb(0,0,0);const t=await fetchText(url);cb(t.length,t.length,0);return t;
+}
+
+/* ═══ search-index ═══ */
+const norm=s=>String(s||'').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9]+/g,' ').trim();
+function validate(arr){
+  if(!Array.isArray(arr))throw Error('Ожидался массив объектов [{q,a,c,u}]');
+  const seen=new Set(),out=[];let bad=0;
+  for(const o of arr){if(!o||typeof o.q!=='string'||typeof o.a!=='string'||!o.q.trim()){bad++;continue}
+    const k=o.q+'\u0001'+o.a;if(seen.has(k))continue;seen.add(k);
+    out.push({q:o.q.trim(),a:o.a.trim(),c:String(o.c||'Без категории'),u:typeof o.u==='string'?o.u:''})}
+  if(!out.length)throw Error('В файле нет корректных записей (нужны поля q и a)');
+  return{out,bad};
+}
+function build(items){
+  const m=new Map(),cats={};
+  items.forEach((it,i)=>{it.nq=norm(it.q);it.na=norm(it.a);cats[it.c]=(cats[it.c]||0)+1;
+    new Set((it.nq+' '+it.na).split(' ')).forEach(t=>{if(!t)return;const a=m.get(t);a?a.push(i):m.set(t,[i])})});
+  S.idx={m,keys:[...m.keys()].sort()};S.cats=cats;
+}
+const lb=(k,t)=>{let l=0,h=k.length;while(l<h){const x=(l+h)>>1;k[x]<t?l=x+1:h=x}return l};
+function search(){
+  const q=norm(S.q);S.res=[];if(!q||!S.idx)return;
+  const ts=q.split(' '),{m,keys}=S.idx;let ids=null;
+  for(const t of ts){const set=new Set();for(let i=lb(keys,t);i<keys.length&&keys[i].startsWith(t);i++)for(const id of m.get(keys[i]))set.add(id);
+    ids=ids?new Set([...ids].filter(x=>set.has(x))):set;if(!ids.size)break}
+  const r=[];
+  for(const id of ids){const it=S.items[id];if(S.cat&&it.c!==S.cat)continue;let s=0,pos=-1,ord=true;
+    for(const t of ts){let p=it.nq.startsWith(t)?0:it.nq.indexOf(' '+t);
+      if(p>=0){s+=10+t.length;if(p===0)s+=5;if(p<pos)ord=false;pos=p}else s+=3}
+    if(ord&&ts.length>1)s+=5;if(it.nq.includes(q))s+=20;if(it.nq.startsWith(q))s+=10;r.push([id,s])}
+  r.sort((a,b)=>b[1]-a[1]);S.res=r.map(x=>x[0]);
+}
+
+/* ═══ state ═══ */
+const S={tab:'s',mode:'site',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],fav:new Set(),hist:[],hide:false,
+  pref:{theme:'auto',fs:16,auto:true},meta:{},st:null,rep:{id:null,show:false,ok:0,no:0,favOnly:false}};
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const vib=()=>navigator.vibrate&&navigator.vibrate(15);
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)}
+const I={s:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+ r:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 3v6h-6M21 12a9 9 0 0 1-15 6l-3-3M3 21v-6h6"/></svg>',
+ f:'<svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg>',
+ g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>',
+ u:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 3v6h-6"/></svg>',
+ c:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
+ w:'<svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg>',
+ h:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4M8.6 13.4l6.8 4"/></svg>'};
+
+/* ═══ data loading / update ═══ */
+async function loadActive(){
+  const raw=await kvGet(S.mode==='own'?'db_own':'db_site');
+  S.items=raw||[];S.q='';S.cat='';S.lim=10;build(S.items);search();
+}
+async function installJson(text,key,date){ // проверка → сохранение → только потом замена
+  let arr;try{arr=JSON.parse(text)}catch(e){throw Error('Файл повреждён: это не корректный JSON')}
+  const{out,bad}=validate(arr);await kvSet(key,out);
+  if(date){S.meta.date=date;S.meta.count=out.length;await kvSet('meta',S.meta)}
+  return{n:out.length,bad};
+}
+async function checkUpdate(force){
+  S.st={t:'msg',m:'Проверяю сайт…'};render();
+  try{
+    const html=await fetchText(SITE+'/'),mt=/Материал обновл[её]н\s+(\d{2}\.\d{2}\.\d{4})/.exec(html);
+    if(!mt)throw Error('Не удалось найти дату на странице');
+    const d=mt[1];
+    if(!force&&S.meta.date===d&&(await kvGet('db_site'))){S.st={t:'msg',m:'У вас актуальная база ('+d+')'};render();return}
+    S.st={t:'prog',p:0,m:'Загрузка базы…'};render();
+    const text=await fetchJsonProgress(JSON_URL,(n,tot,sp)=>{S.st={t:'prog',p:tot?n/tot*100:0,m:'Загрузка: '+(n/1048576).toFixed(1)+(tot?' / '+(tot/1048576).toFixed(1):'')+' МБ'+(sp?', '+(sp/1048576).toFixed(2)+' МБ/с':'')};upBar()});
+    S.st={t:'msg',m:'Обработка и индексация…'};render();await new Promise(r=>setTimeout(r,30));
+    const r=await installJson(text,'db_site',d);
+    if(S.mode==='site')await loadActive();
+    S.st={t:'msg',m:'Готово: '+r.n+' вопросов, дата '+d};vib();
+  }catch(e){S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
+  render();
+}
+function upBar(){const b=$('#bar');if(b)b.style.width=S.st.p+'%';const l=$('#bl');if(l)l.textContent=S.st.m+(S.st.p?' ('+Math.round(S.st.p)+'%)':'')}
+
+/* ═══ ui ═══ */
+function hl(text){
+  const ts=norm(S.q).split(' ').filter(Boolean);let h=esc(text);if(!ts.length)return h;
+  const re=new RegExp('('+ts.map(t=>t.replace(/е/g,'[её]').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')[а-яёa-z0-9]*','gi');
+  return h.replace(re,'<mark>$&</mark>');
+}
+function ans(a,h){
+  const parts=a.split(/\n|\s\|\s|;\s/).map(x=>x.trim()).filter(Boolean);
+  return parts.length>1?'<ul>'+parts.map(p=>'<li>'+(h?hl(p):esc(p))+'</li>').join('')+'</ul>':(h?hl(a):esc(a));
+}
+function cardHtml(id){
+  const it=S.items[id],f=S.fav.has(it.q);
+  return `<div class="card" data-id="${id}"><span class="bd">${esc(it.c)}</span>
+  <div class="lb">Вопрос</div><div class="q">${hl(it.q)}</div>
+  <div class="lb">Ответ</div>${S.hide?`<div class="a" data-act="rev" style="opacity:.6">Нажмите, чтобы показать ответ</div>`:`<div class="a">${ans(it.a,true)}</div>`}
+  <div class="row" style="margin-top:10px"><button class="ib" data-act="copy" aria-label="Копировать">${I.c}</button>
+  <button class="ib ${f?'on':''}" data-act="fav" aria-label="В избранное">${I.f}</button>
+  ${it.u?`<button class="ib" data-act="web" aria-label="Открыть на сайте">${I.w}</button>`:''}
+  <button class="ib" data-act="share" aria-label="Поделиться">${I.h}</button></div></div>`;
+}
+function head(){
+  const own=S.mode==='own',st=S.st;
+  return `<div class="card"><div class="mu">${own?'Своя база':'Материал обновлён:'}</div>
+  <div class="row" style="justify-content:space-between"><b style="font-size:1.2em">${own?'Пользовательская':(S.meta.date||'нет базы')}</b>
+  ${own?'':`<button class="btn s" data-act="upd">${I.u} Проверить</button>`}</div>
+  <div class="mu" style="margin:6px 0">Вопросов в базе: ${S.items.length}</div>
+  ${st?(st.t==='prog'?`<div class="bar"><i id="bar" style="width:${st.p}%"></i></div><div id="bl" class="mu">${st.m}</div>`:
+  `<div class="${st.t==='err'?'er':'mu'}">${esc(st.m)}</div>${st.t==='err'?'<button class="btn" data-act="retry" style="margin-top:8px">Повторить</button>':''}`):''}</div>`;
+}
+function resHtml(){
+  if(!S.items.length)return '';
+  if(!norm(S.q)){return S.hist.length?`<div class="mu">Недавние:</div><div class="chips">${S.hist.map(h=>`<button class="chip" data-h="${esc(h)}">${esc(h)}</button>`).join('')}</div>`:'<div class="mu" style="text-align:center;margin-top:30px">Введите слова или части слов в любом порядке</div>'}
+  if(!S.res.length)return '<div class="card" style="text-align:center"><b>Ничего не найдено</b><div class="mu">Проверьте ввод или смените категорию</div></div>';
+  const shown=S.res.slice(0,S.lim);
+  return `<div class="mu" style="margin:4px 4px 8px">Найдено: ${S.res.length}</div>`+shown.map(cardHtml).join('')+(S.res.length>S.lim?'<button class="btn s" data-act="more" style="width:100%">Показать ещё</button>':'');
+}
+function viewSearch(){
+  if(S.loading)return '<div class="sk"></div><div class="sk"></div>';
+  if(!S.items.length&&!S.st)return head()+`<div class="card" style="text-align:center"><b>Базы нет</b><div class="mu" style="margin:6px 0 12px">Установите базу с сайта (нужен интернет один раз) или загрузите свой файл.</div><button class="btn" data-act="retry">Установить базу</button></div>`;
+  const cs=Object.entries(S.cats).sort((a,b)=>b[1]-a[1]);
+  return head()+`<input type="search" id="q" placeholder="Поиск: например «боков ролик 500»" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
+  <div class="row" style="margin-top:6px"><div class="chips" style="flex:1"><button class="chip ${S.cat?'':'on'}" data-c="">Все (${S.items.length})</button>${cs.map(([c,n])=>`<button class="chip ${S.cat===c?'on':''}" data-c="${esc(c)}">${esc(c)} (${n})</button>`).join('')}</div>
+  <button class="ib ${S.hide?'on':''}" data-act="hide" aria-label="Скрыть ответы">${I.s}</button></div><div id="res">${resHtml()}</div>`;
+}
+function viewFav(){
+  const ids=S.items.map((_,i)=>i).filter(i=>S.fav.has(S.items[i].q));
+  const q=S.q;S.q='';const h=ids.length?ids.map(cardHtml).join(''):'<div class="mu" style="text-align:center;margin-top:40px">В избранном пусто</div>';S.q=q;return h;
+}
+function viewRep(){
+  const R=S.rep,pool=S.items.map((_,i)=>i).filter(i=>!R.favOnly||S.fav.has(S.items[i].q));
+  if(!pool.length)return '<div class="mu" style="text-align:center;margin-top:40px">Нет карточек для повторения</div>';
+  if(R.id==null||!pool.includes(R.id))R.id=pool[Math.random()*pool.length|0];
+  const it=S.items[R.id];
+  return `<div class="row" style="margin-bottom:10px"><button class="chip ${R.favOnly?'on':''}" data-act="rfav">Только избранное</button><span class="mu">✔ ${R.ok} · ✘ ${R.no}</span></div>
+  <div class="card" data-act="flip" style="min-height:200px"><span class="bd">${esc(it.c)}</span><div class="q" style="font-size:1.2em">${esc(it.q)}</div>
+  ${R.show?`<div class="a">${ans(it.a)}</div>`:'<div class="mu" style="margin-top:20px">Нажмите, чтобы увидеть ответ</div>'}</div>
+  ${R.show?`<div class="row"><button class="btn s" style="flex:1" data-act="no">Не знал</button><button class="btn" style="flex:1" data-act="ok">Знал</button></div>`:''}`;
+}
+function viewSet(){
+  const own=S.mode==='own';
+  return `<div class="card"><b>База данных</b><div class="sw" style="margin:10px 0"><button class="${own?'':'on'}" data-mode="site">Сайт</button><button class="${own?'on':''}" data-mode="own">Своя</button></div>
+  <div class="row"><button class="btn s" data-act="load">Загрузить свою БД</button><button class="btn s" data-act="exp">Выгрузить БД</button><button class="btn s" data-act="delown">Удалить свою</button></div>
+  <div class="mu" style="margin-top:8px">Версия базы: ${S.meta.date||'—'} · записей: ${S.items.length}</div></div>
+  <div class="card"><label class="r">Тема<select id="th" style="width:60%"><option value="auto">Системная</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
+  <label class="r">Размер текста<input type="range" id="fs" min="14" max="24" value="${S.pref.fs}"></label>
+  <label class="r">Автопроверка при запуске<input type="checkbox" id="au" ${S.pref.auto?'checked':''} style="width:24px;height:24px"></label>
+  <div class="row"><button class="btn s" data-act="clh">Очистить историю</button><button class="btn s" data-act="clf">Очистить избранное</button></div></div>`;
+}
+function render(){
+  const v={s:viewSearch,f:viewFav,r:viewRep,g:viewSet}[S.tab]();$('#m').innerHTML=v;
+  const t=$('#th');if(t)t.value=S.pref.theme;
+  $('#nav').innerHTML=[['s','Поиск'],['r','Повторение'],['f','Избранное'],['g','Настройки']].map(([k,n])=>`<button class="${S.tab===k?'on':''}" data-tab="${k}">${I[k]}${n}</button>`).join('');
+}
+function applyPref(){const r=document.documentElement;r.dataset.t=S.pref.theme;r.style.setProperty('--fs',S.pref.fs+'px')}
+const savePref=()=>kvSet('pref',S.pref);
+function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
+function refreshRes(){search();$('#res').innerHTML=resHtml()}
+
+/* ═══ events ═══ */
+let dt;
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){S.q=e.target.value;S.lim=10;clearTimeout(dt);dt=setTimeout(()=>{refreshRes();
+    clearTimeout(S.ht);S.ht=setTimeout(()=>{const n=norm(S.q);if(n.length>2&&S.res.length){S.hist=[n,...S.hist.filter(x=>x!==n)].slice(0,10);kvSet('hist',S.hist)}},1500)},30)}
+  if(e.target.id==='th'){S.pref.theme=e.target.value;applyPref();savePref()}
+  if(e.target.id==='fs'){S.pref.fs=+e.target.value;applyPref();savePref()}
+  if(e.target.id==='au'){S.pref.auto=e.target.checked;savePref()}
+});
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act],[data-tab],[data-c],[data-h],[data-mode]');if(!b)return;
+  const d=b.dataset,card=b.closest('[data-id]'),it=card&&S.items[+card.dataset.id];
+  if(d.tab)return go(d.tab);
+  if(d.c!==undefined){S.cat=d.c;S.lim=10;search();const y=$('#m').scrollTop;render();$('#m').scrollTop=y;return}
+  if(d.h){S.q=d.h;render();search();$('#res').innerHTML=resHtml();return}
+  if(d.mode){S.mode=d.mode;await kvSet('mode',S.mode);await loadActive();vib();return render()}
+  switch(d.act){
+    case'upd':checkUpdate();break;
+    case'retry':checkUpdate(true);break;
+    case'more':S.lim+=10;$('#res').innerHTML=resHtml();break;
+    case'hide':S.hide=!S.hide;render();break;
+    case'rev':b.outerHTML=`<div class="a">${ans(it.a,true)}</div>`;break;
+    case'copy':try{await navigator.clipboard.writeText(it.a);toast('Ответ скопирован');vib()}catch{toast('Не удалось скопировать')}break;
+    case'fav':S.fav.has(it.q)?S.fav.delete(it.q):S.fav.add(it.q);kvSet('fav',[...S.fav]);vib();S.tab==='f'?render():b.classList.toggle('on');break;
+    case'web':window.open(SITE+it.u,'_blank');break;
+    case'share':{const t=it.q+'\n'+it.a+(it.u?'\n'+SITE+it.u:'');if(navigator.share)navigator.share({text:t}).catch(()=>{});else{navigator.clipboard.writeText(t);toast('Скопировано')}break}
+    case'flip':S.rep.show=true;render();break;
+    case'ok':case'no':S.rep[d.act]++;S.rep.id=null;S.rep.show=false;vib();render();break;
+    case'rfav':S.rep.favOnly=!S.rep.favOnly;S.rep.id=null;render();break;
+    case'load':$('#file').click();break;
+    case'exp':{if(!S.items.length)return toast('База пуста');const bl=new Blob([JSON.stringify(S.items.map(({q,a,c,u})=>({q,a,c,u})))],{type:'application/json'});
+      const f=new File([bl],'questions.json',{type:'application/json'});
+      if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});
+      else{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='questions.json';a.click()}break}
+    case'delown':if(confirm('Удалить свою базу?')){await kvDel('db_own');if(S.mode==='own')await loadActive();toast('Своя база удалена');render()}break;
+    case'clh':S.hist=[];kvSet('hist',[]);toast('История очищена');break;
+    case'clf':if(confirm('Очистить избранное?')){S.fav.clear();kvSet('fav',[]);toast('Готово')}break;
+  }
+});
+$('#file').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const r=await installJson(await f.text(),'db_own');S.mode='own';await kvSet('mode','own');await loadActive();
+    toast('Загружено: '+r.n+(r.bad?', пропущено битых: '+r.bad:''));render()}
+  catch(err){toast('Ошибка: '+err.message)}
+});
+window.addEventListener('popstate',()=>{if(S.tab!=='s')go('s',false)});
+
+/* ═══ старт ═══ */
+(async()=>{
+  S.loading=true;render();
+  try{
+    S.meta=(await kvGet('meta'))||{};S.fav=new Set((await kvGet('fav'))||[]);S.hist=(await kvGet('hist'))||[];
+    Object.assign(S.pref,await kvGet('pref')||{});S.mode=(await kvGet('mode'))||'site';applyPref();
+    await loadActive();
+  }catch(e){toast('Ошибка хранилища: '+e.message)}
+  S.loading=false;render();
+  if(!S.items.length&&S.mode==='site')checkUpdate(true);
+  else if(S.pref.auto&&S.mode==='site'&&navigator.onLine)checkUpdate();
+})();
+</script></body></html>
