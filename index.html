@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>helper</title>
+<title>Помощник по вопросам</title>
 <style>
 :root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
 .kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;min-height:24px}.kv span{color:var(--mu)}
@@ -55,11 +55,26 @@ mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
 nav button.on svg{animation:pop .3s}
 #toast{transform:translateY(12px);transition:.25s}#toast.on{transform:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.sh{position:fixed;inset:0;z-index:20;pointer-events:none}
+.shb{position:absolute;inset:0;background:#0007;opacity:0;transition:opacity .25s}
+.shp{position:absolute;left:0;right:0;bottom:0;background:var(--sf);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:82vh;overflow-y:auto;box-shadow:0 -4px 20px #0004}
+.sh.on{pointer-events:auto}.sh.on .shb{opacity:1}.sh.on .shp{transform:none}
+.shp h3{margin:0 0 12px}
+.pick{width:100%;min-height:52px;display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;background:none;color:var(--tx);font:inherit;padding:0 2px}
+.pick b{color:var(--ac);font-weight:600;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid var(--bd);border-radius:16px;background:var(--sf);color:var(--tx);font:inherit;font-size:13px;padding:6px;display:flex;flex-direction:column;gap:6px;align-items:center;transition:transform .12s}
+.tile:active{transform:scale(.95)}.tile.on{outline:3px solid var(--ac)}
+.pv{width:100%;height:54px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700}
+.pv i{width:14px;height:14px;border-radius:7px}
+.opt{width:100%;display:flex;flex-direction:column;align-items:flex-start;border:0;border-radius:14px;background:none;color:var(--tx);font:inherit;padding:10px 12px;margin-bottom:4px;min-height:52px;text-align:left}
+.opt small{color:var(--mu)}.opt.on{background:var(--ac2);color:var(--ac)}
 </style></head><body>
 <main id="m"></main>
 <div id="toast"></div>
 <nav id="nav"></nav>
 <input type="file" id="file" accept=".json,application/json" hidden>
+<div id="sh" class="sh"><div class="shb" data-close="1"></div><div class="shp" id="shp"></div></div>
 <script>
 'use strict';
 /* ═══ storage: IndexedDB (key-value) ═══ */
@@ -180,7 +195,7 @@ function hlText(text,uq){
   for(const m of text.matchAll(RW)){
     out+=esc(text.slice(last,m.index));
     const w=norm(m[0]),a=S.pref.hm&&ts.some(t=>w.startsWith(t)),u=!!(uq&&uq.has(i));
-    out+=(a||u)?`<mark class="${a&&u?'m3':a?'m1':'m2'}">${esc(m[0])}</mark>`:esc(m[0]);
+    out+=(a||u)?`<mark class="${u?'m2':'m1'}">${esc(m[0])}</mark>`:esc(m[0]);
     last=m.index+m[0].length;i++;
   }
   return out+esc(text.slice(last));
@@ -188,26 +203,15 @@ function hlText(text,uq){
 /* Уникальные слова/словосочетания среди показанных вопросов: то, чего нет в других вопросах выдачи */
 const STOP=new Set('для при над под про без что как это или его все она они был были быть может которые который какой какие'.split(' '));
 function uniqueMap(ids){
-  const info=ids.map(id=>{const toks=[...S.items[id].q.matchAll(RW)].map(m=>norm(m[0]));return{id,toks}});
-  const d1=new Map(),d2=new Map(),inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
-  info.forEach(o=>{
-    o.s1=new Set(o.toks.filter(t=>t.length>2));
-    o.s2=new Set(o.toks.slice(1).map((t,i)=>o.toks[i]+' '+t));
-    o.s1.forEach(t=>inc(d1,t));o.s2.forEach(t=>inc(d2,t));
-  });
+  const info=ids.map(id=>({id,toks:[...S.items[id].q.matchAll(RW)].map(m=>norm(m[0]))}));
+  const df=new Map(); // в скольких показанных вопросах встречается слово
+  info.forEach(o=>new Set(o.toks).forEach(t=>df.set(t,(df.get(t)||0)+1)));
   const res=new Map();
   info.forEach(o=>{
-    const cap=Math.max(1,Math.min(5,Math.ceil(o.toks.length/3))),sel=new Set();let phrase=false;
-    // 1) словосочетания (пары подряд идущих слов), которых нет в других вопросах
-    const bg=[];o.toks.forEach((t,i)=>{if(i&&t.length>2&&o.toks[i-1].length>2&&!STOP.has(t)&&!STOP.has(o.toks[i-1])&&d2.get(o.toks[i-1]+' '+t)===1)bg.push(i)});
-    bg.sort((x,y)=>(o.toks[y].length+o.toks[y-1].length)-(o.toks[x].length+o.toks[x-1].length));
-    for(const i of bg){const add=[i-1,i].filter(k=>!sel.has(k));if(sel.size+add.length<=cap){add.forEach(k=>sel.add(k));phrase=true}}
-    // 2) при отсутствии словосочетаний — отдельные уникальные слова (длинные в приоритете)
-    if(!sel.size){
-      o.toks.map((t,i)=>[t,i]).filter(([t])=>t.length>3&&!STOP.has(t)&&d1.get(t)===1).sort((x,y)=>y[0].length-x[0].length)
-        .slice(0,cap).forEach(([,i])=>sel.add(i));
-    }
-    res.set(o.id,{sel,uniq:phrase||ids.length===1});
+    const sel=new Set();
+    // при единственном вопросе сравнивать не с чем — подсвечиваем только метку «Уникален»
+    if(ids.length>1)o.toks.forEach((t,i)=>{if(t.length>2&&!STOP.has(t)&&df.get(t)===1)sel.add(i)});
+    res.set(o.id,{sel,uniq:ids.length===1||sel.size>0});
   });
   return res;
 }
@@ -261,17 +265,17 @@ function viewSet(){
   ${dev?'<div class="mu" style="margin-top:8px">Режим в разработке: функции появятся позже.</div>':`<div class="kv" style="margin-top:8px"><span>Материал от</span><b>${m.date||'—'}</b></div><div class="kv"><span>Вопросов в БД</span><b>${S.items.length}</b></div>${stat()}
   <div class="row" style="margin-top:8px">${site?'<button class="btn s" data-act="upd">Проверить актуальность</button>':'<button class="btn s" data-act="load">Выгрузить БД</button>'}<button class="btn s" data-act="exp">Скачать БД</button></div>${p}`}
   <div class="div"></div>
-  <label class="r">Раздел<select id="ct" style="width:60%"><option value="">Все (${S.items.length})</option>${cs.map(([c,n])=>`<option value="${esc(c)}" ${S.cat===c?'selected':''}>${esc(c)} (${n})</option>`).join('')}</select></label>
+  ${row("cat","Раздел",S.cat||"Все")}
   <label class="r">Автопроверка при запуске<input type="checkbox" id="au" ${S.pref.auto?'checked':''} style="width:24px;height:24px"></label>
   <button class="btn s" data-act="clh">Очистить историю</button></div>
   <div class="card"><b>Системные</b>
-  <label class="r">Тема<select id="th" style="width:60%">${opts(THEMES,S.pref.theme)}</select></label>
-  <label class="r">Шрифт<select id="ft" style="width:60%">${opts(FONTS,S.pref.font)}</select></label>
+  ${row("theme","Тема",THEMES[S.pref.theme])}
+  ${row("font","Шрифт",FONTS[S.pref.font][0])}
   <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
   <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
   <div class="div"></div>
   <label class="r"><span>Подсветка совпавших слов<br><small class="mu">бледно-жёлтым; «Все слова совпали» в строке раздела</small></span><input type="checkbox" id="hm" ${S.pref.hm?'checked':''} style="width:24px;height:24px"></label>
-  <label class="r"><span>Подсветка уникальных слов<br><small class="mu">бледно-салатовым; пересечение — смешанный цвет</small></span><input type="checkbox" id="hu" ${S.pref.hu?'checked':''} style="width:24px;height:24px"></label></div>`;
+  <label class="r"><span>Подсветка уникальных слов<br><small class="mu">бледно-зелёным, приоритет над жёлтым; слова, которых нет в других найденных вопросах</small></span><input type="checkbox" id="hu" ${S.pref.hu?'checked':''} style="width:24px;height:24px"></label></div>`;
 }
 function render(){
   const v=S.tab==='s'?viewSearch():viewSet(),an=S.lastTab!==S.tab;S.lastTab=S.tab;
@@ -288,6 +292,17 @@ function applyPref(){
   r.style.setProperty('--fs',S.pref.fs+'px');r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
 }
 const savePref=()=>kvSet('pref',S.pref);
+const row=(k,l,v)=>`<button class="pick" data-act="pk" data-k="${k}"><span>${l}</span><b>${esc(String(v))} ›</b></button>`;
+function sheet(html){$('#shp').innerHTML=html;$('#sh').classList.add('on')}
+function closeSheet(){$('#sh').classList.remove('on')}
+function openPick(k){
+  if(k==='theme')return sheet('<h3>Тема</h3><div class="tg">'+Object.keys(THEMES).map(id=>{
+    const c=(id==='auto'?TH.light:TH[id])[0].split(','),bg=id==='auto'?`linear-gradient(135deg,${c[0]} 50%,${TH.dark[0].split(',')[0]} 50%)`:c[0];
+    return `<button class="tile ${S.pref.theme===id?'on':''}" data-pv="theme|${id}"><span class="pv" style="background:${bg};color:${id==='auto'?'#888':c[2]}">Аа<i style="background:${c[4]}"></i></span>${THEMES[id]}</button>`}).join('')+'</div>');
+  if(k==='font')return sheet('<h3>Шрифт</h3>'+Object.entries(FONTS).map(([id,[n,f]])=>`<button class="opt ${S.pref.font===id?'on':''}" data-pv="font|${id}" style="font-family:${f}"><span>${n}</span><small>Образец текста: Аа Бб 0123</small></button>`).join(''));
+  if(k==='cat'){const cs=Object.entries(S.cats).sort((a,b)=>b[1]-a[1]);
+    return sheet('<h3>Раздел поиска</h3>'+[['',`Все (${S.items.length})`],...cs.map(([c,n])=>[c,`${c} (${n})`])].map(([c,n])=>`<button class="opt ${S.cat===c?'on':''}" data-pv="cat|${esc(c)}">${esc(n)}</button>`).join(''))}
+}
 function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
 
 /* ═══ events ═══ */
@@ -305,11 +320,17 @@ document.addEventListener('input',e=>{
   if(id==='au'){S.pref.auto=e.target.checked;savePref()}
 });
 document.addEventListener('click',async e=>{
-  const b=e.target.closest('[data-act],[data-tab],[data-h],[data-mode]');if(!b)return;
+  const b=e.target.closest('[data-act],[data-tab],[data-h],[data-mode],[data-pv],[data-close]');if(!b)return;
   const d=b.dataset;
   if(d.tab)return go(d.tab);
   if(d.h){S.q=d.h;render();search();$('#res').innerHTML=resHtml();return}
   if(d.mode){S.mode=d.mode;S.st=null;S.pend=null;await kvSet('mode',S.mode);await loadActive();vib();return render()}
+  if(d.close){closeSheet();return}
+  if(d.pv){const i=d.pv.indexOf('|'),k=d.pv.slice(0,i),v=d.pv.slice(i+1);
+    if(k==='theme'){S.pref.theme=v;applyPref();savePref()}
+    if(k==='font'){S.pref.font=v;applyPref();savePref()}
+    if(k==='cat'){S.cat=v;S.lim=S.pref.n;search()}
+    vib();closeSheet();render();return}
   switch(d.act){
     case'upd':checkUpdate();break;
     case'retry':checkUpdate(true);break;
@@ -320,8 +341,12 @@ document.addEventListener('click',async e=>{
     case'psave':{const v=($('#pd').value||'').split('-'),date=v.length===3?v[2]+'.'+v[1]+'.'+v[0]:'';
       await kvSet('db_own',S.pend.out);S.meta.own={date,count:S.pend.out.length};await kvSet('meta',S.meta);
       S.pend=null;await loadActive();toast('База сохранена');vib();render();break}
-    case'clr':{const k={site:'db_site',own:'db_own'}[S.mode];if(!k){toast('В этом режиме данных пока нет');break}
-      if(!confirm('Очистить базу режима «'+MODES[S.mode]+'»? Данные будут удалены с телефона.'))break;
+    case'pk':openPick(d.k);break;
+    case'clr':{
+      if(!{site:1,own:1}[S.mode]){toast('В этом режиме данных пока нет');break}
+      sheet(`<h3>Очистить базу?</h3><p class="mu">Режим «${MODES[S.mode]}»: ${S.items.length} вопросов будут удалены с телефона. Действие нельзя отменить.</p>
+      <div class="row"><button class="btn s" data-close="1" style="flex:1">Отмена</button><button class="btn" data-act="clrok" style="flex:1;background:#b3261e;color:#fff">Удалить</button></div>`);break}
+    case'clrok':{const k={site:'db_site',own:'db_own'}[S.mode];closeSheet();
       await kvDel(k);delete S.meta[S.mode];await kvSet('meta',S.meta);S.st=null;S.pend=null;await loadActive();toast('База очищена');vib();render();break}
     case'clh':S.hist=[];kvSet('hist',[]);toast('История очищена');break;
   }
@@ -332,7 +357,7 @@ $('#file').addEventListener('change',async e=>{
     S.pend=validate(arr);render()}
   catch(err){toast('Ошибка: '+err.message)}
 });
-window.addEventListener('popstate',()=>{if(S.tab!=='s')go('s',false)});
+window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){closeSheet();return}if(S.tab!=='s')go('s',false)});
 
 /* ═══ старт ═══ */
 (async()=>{
@@ -346,34 +371,3 @@ window.addEventListener('popstate',()=>{if(S.tab!=='s')go('s',false)});
   if(S.mode==='site'){if(!S.items.length)checkUpdate(true);else if(S.pref.auto&&navigator.onLine)checkUpdate()}
 })();
 </script></body></html>
-<!doctype html>
-<html lang="ru"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Помощник по вопросам</title>
-<style>
-:root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
-.kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;min-height:24px}.kv span{color:var(--mu)}
-.hist{padding:8px;max-height:64px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}.hist .chip{min-height:32px;font-size:13px}
-.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.in{width:100%;min-height:48px;border-radius:14px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 12px;font:inherit;margin:8px 0}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--tx);font:var(--fs)/1.45 var(--ff,system-ui,sans-serif);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
-main{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;scroll-behavior:smooth}
-nav{display:flex;background:var(--sf);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;min-height:56px;border:0;background:none;color:var(--mu);font:inherit;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-nav button.on{color:var(--ac);font-weight:700}
-svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.card{background:var(--sf);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px #0002;transition:.2s}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{min-height:48px;padding:0 16px;border:0;border-radius:24px;background:var(--ac);color:var(--on);font:inherit;font-weight:600}
-.btn.s{background:var(--ac2);color:var(--ac)}
-.ib{width:48px;height:48px;border:0;border-radius:24px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
-.ib.on{background:var(--ac);color:var(--on)}
-input[type=search],select{width:100%;min-height:52px;border-radius:26px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 18px;font:inherit}
-input[type=search]:focus{outline:0;border-color:var(--ac)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
-.chip{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:14px}
-.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
-.q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
-.a ul{margin:0;padding-left:20px}.lb{font-size:12px;color:var(--mu);margin-top:8px}
