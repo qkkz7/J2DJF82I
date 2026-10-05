@@ -1,15 +1,9 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Helper 1.1</title>
+<title>helper</title>
 <style>
 :root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
-:root[data-t=dark],:root[data-t=amoled]{--bg:#141218;--sf:#1f1b26;--tx:#ece6f2;--mu:#a9a3b5;--ac:#b9a6ff;--ac2:#352c58;--ok:#6fdc9c;--er:#ffb4ab;--bd:#332e3d}
-:root[data-t=amoled]{--bg:#000;--sf:#0d0d0d;--ac:#8ab4ff;--ac2:#1a2640;--bd:#222}
-:root[data-t=sepia]{--bg:#f4ecd8;--sf:#fbf5e6;--tx:#3b2f1e;--mu:#7a6a52;--ac:#9a5b1f;--ac2:#efe0c2;--bd:#e0d2b4}
-:root[data-t=blue]{--bg:#eaf2fb;--sf:#fff;--tx:#12263f;--mu:#566b85;--ac:#1565c0;--ac2:#d9e8fa;--bd:#c9dbf0}
-@media(prefers-color-scheme:dark){:root[data-t=auto]{--bg:#141218;--sf:#1f1b26;--tx:#ece6f2;--mu:#a9a3b5;--ac:#b9a6ff;--ac2:#352c58;--ok:#6fdc9c;--er:#ffb4ab;--bd:#332e3d}}
-:root[data-t=dark] .btn,:root[data-t=amoled] .btn{color:#1d1b20}
 .kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;min-height:24px}.kv span{color:var(--mu)}
 .hist{padding:8px;max-height:64px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}.hist .chip{min-height:32px;font-size:13px}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -24,20 +18,18 @@ nav button.on{color:var(--ac);font-weight:700}
 svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .card{background:var(--sf);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px #0002;transition:.2s}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{min-height:48px;padding:0 16px;border:0;border-radius:24px;background:var(--ac);color:#fff;font:inherit;font-weight:600}
-:root[data-t=dark] .btn{color:#1d1b20}
+.btn{min-height:48px;padding:0 16px;border:0;border-radius:24px;background:var(--ac);color:var(--on);font:inherit;font-weight:600}
 .btn.s{background:var(--ac2);color:var(--ac)}
 .ib{width:48px;height:48px;border:0;border-radius:24px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
-.ib.on{background:var(--ac);color:#fff}
+.ib.on{background:var(--ac);color:var(--on)}
 input[type=search],select{width:100%;min-height:52px;border-radius:26px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 18px;font:inherit}
 input[type=search]:focus{outline:0;border-color:var(--ac)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
 .chip{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:14px}
-.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
 .a ul{margin:0;padding-left:20px}.lb{font-size:12px;color:var(--mu);margin-top:8px}
 .bd{display:inline-block;font-size:12px;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
-mark{background:#ffd54f;color:#000;border-radius:3px}
 .mu{color:var(--mu);font-size:14px}.er{color:var(--er)}
 .bar{height:10px;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
 .sk{height:90px;border-radius:20px;background:linear-gradient(90deg,var(--sf),var(--ac2),var(--sf));background-size:200%;animation:sk 1.2s infinite;margin-bottom:12px}
@@ -46,6 +38,23 @@ mark{background:#ffd54f;color:#000;border-radius:3px}
 #toast.on{opacity:1}
 .sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:42px;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
 label.r{display:flex;justify-content:space-between;align-items:center;min-height:48px}
+option{background:var(--sf);color:var(--tx)}
+input[type=checkbox]{accent-color:var(--ac)}
+mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
+.m1{background:var(--m1)}.m2{background:var(--m2)}.m3{background:#d9ef9c;background:color-mix(in srgb,var(--m1) 50%,var(--m2) 50%)}
+.div{height:1px;background:var(--bd);margin:12px 0}
+.bd{margin-right:6px}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fi{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.view>.card{animation:up .32s cubic-bezier(.2,.8,.2,1) both}
+.view>.card:nth-child(2){animation-delay:.05s}.view>.card:nth-child(3){animation-delay:.1s}.view>.card:nth-child(4){animation-delay:.15s}
+.rc{animation:fi .18s ease both}
+.btn,.ib,.chip,nav button{transition:transform .12s,background .2s,color .2s,opacity .2s}
+.btn:active,.ib:active,.chip:active{transform:scale(.95)}
+nav button.on svg{animation:pop .3s}
+#toast{transform:translateY(12px);transition:.25s}#toast.on{transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <main id="m"></main>
 <div id="toast"></div>
@@ -111,22 +120,30 @@ function search(){
 
 /* ═══ state ═══ */
 const MODES={site:'Сайт',own:'Своя',site2:'Сайт 2.0',own2:'Своя 2.0'};
-const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',amoled:'AMOLED (чёрная)',sepia:'Сепия',blue:'Голубая'};
+const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',blue:'Голубая',sepia:'Сепия',retro:'Ретро',gray:'Серая'};
+/* палитры: bg,sf,tx,mu,ac,ac2,bd,on,m1(совпадение),m2(уникальное); последний флаг — тёмная */
+const TH={light:['#f6f4fb,#ffffff,#1d1b20,#6b6775,#5b3fd1,#e9e2ff,#e3dff0,#ffffff,#fff3a6,#c6efbd',0],
+dark:['#141218,#1f1b26,#ece6f2,#a9a3b5,#b9a6ff,#352c58,#332e3d,#1d1b20,#6a5f1c,#25572e',1],
+blue:['#eaf2fb,#ffffff,#12263f,#566b85,#1565c0,#d9e8fa,#c9dbf0,#ffffff,#fff1a0,#bfeac4',0],
+sepia:['#f4ecd8,#fbf5e6,#3b2f1e,#7a6a52,#9a5b1f,#efe0c2,#e0d2b4,#ffffff,#f6e08a,#cfe4a8',0],
+retro:['#2a1b38,#3a2650,#ffe9b0,#c9b0e0,#ff6ec7,#4c3069,#5d3d80,#2a1b38,#7a6420,#2f6b4d',1],
+gray:['#dcdee1,#eceef0,#1c1e21,#555a60,#3d4b5c,#cdd2d8,#bcc2c9,#ffffff,#f3e58f,#bfe0b8',0]};
 const FONTS={sys:['Системный','system-ui,sans-serif'],serif:['С засечками','Georgia,"Times New Roman",serif'],mono:['Моноширинный','ui-monospace,Menlo,Consolas,monospace'],round:['Округлый','"Trebuchet MS","Segoe UI",sans-serif']};
-const S={tab:'s',mode:'site',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],pref:{theme:'auto',font:'sys',fs:16,auto:true},meta:{},st:null,pend:null};
+const S={tab:'s',mode:'site',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10},meta:{},st:null,pend:null};
 const $=s=>document.querySelector(s);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vib=()=>navigator.vibrate&&navigator.vibrate(15);
 const metaNow=()=>S.meta[S.mode]||{};
 const isDev=()=>S.mode.endsWith('2');
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)}
-const I={s:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+const RW=/[A-Za-zА-Яа-яЁё0-9]+/g;
+const I={t:'<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>',s:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
  g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'};
 
 /* ═══ data ═══ */
 async function loadActive(){
   const k={site:'db_site',own:'db_own'}[S.mode];
-  S.items=k?(await kvGet(k))||[]:[];S.q='';S.cat='';S.lim=10;build(S.items);search();
+  S.items=k?(await kvGet(k))||[]:[];S.q='';S.cat='';S.lim=S.pref.n;build(S.items);search();
 }
 async function checkUpdate(force){
   S.st={t:'msg',m:'Проверяю сайт…'};render();
@@ -155,16 +172,56 @@ async function dl(){
 }
 
 /* ═══ ui ═══ */
-function hl(text){
-  const ts=norm(S.q).split(' ').filter(Boolean);let h=esc(text);if(!ts.length)return h;
-  const re=new RegExp('('+ts.map(t=>t.replace(/е/g,'[её]').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')[а-яёa-z0-9]*','gi');
-  return h.replace(re,'<mark>$&</mark>');
+/* слова запроса (нормализованные) */
+const qToks=()=>norm(S.q).split(' ').filter(Boolean);
+/* Подсветка: совпадения (жёлтый), уникальные (салатовый), оба сразу (смесь). uq — Set индексов слов */
+function hlText(text,uq){
+  const ts=qToks();let out='',last=0,i=0;
+  for(const m of text.matchAll(RW)){
+    out+=esc(text.slice(last,m.index));
+    const w=norm(m[0]),a=S.pref.hm&&ts.some(t=>w.startsWith(t)),u=!!(uq&&uq.has(i));
+    out+=(a||u)?`<mark class="${a&&u?'m3':a?'m1':'m2'}">${esc(m[0])}</mark>`:esc(m[0]);
+    last=m.index+m[0].length;i++;
+  }
+  return out+esc(text.slice(last));
+}
+/* Уникальные слова/словосочетания среди показанных вопросов: то, чего нет в других вопросах выдачи */
+const STOP=new Set('для при над под про без что как это или его все она они был были быть может которые который какой какие'.split(' '));
+function uniqueMap(ids){
+  const info=ids.map(id=>{const toks=[...S.items[id].q.matchAll(RW)].map(m=>norm(m[0]));return{id,toks}});
+  const d1=new Map(),d2=new Map(),inc=(m,k)=>m.set(k,(m.get(k)||0)+1);
+  info.forEach(o=>{
+    o.s1=new Set(o.toks.filter(t=>t.length>2));
+    o.s2=new Set(o.toks.slice(1).map((t,i)=>o.toks[i]+' '+t));
+    o.s1.forEach(t=>inc(d1,t));o.s2.forEach(t=>inc(d2,t));
+  });
+  const res=new Map();
+  info.forEach(o=>{
+    const cap=Math.max(1,Math.min(5,Math.ceil(o.toks.length/3))),sel=new Set();let phrase=false;
+    // 1) словосочетания (пары подряд идущих слов), которых нет в других вопросах
+    const bg=[];o.toks.forEach((t,i)=>{if(i&&t.length>2&&o.toks[i-1].length>2&&!STOP.has(t)&&!STOP.has(o.toks[i-1])&&d2.get(o.toks[i-1]+' '+t)===1)bg.push(i)});
+    bg.sort((x,y)=>(o.toks[y].length+o.toks[y-1].length)-(o.toks[x].length+o.toks[x-1].length));
+    for(const i of bg){const add=[i-1,i].filter(k=>!sel.has(k));if(sel.size+add.length<=cap){add.forEach(k=>sel.add(k));phrase=true}}
+    // 2) при отсутствии словосочетаний — отдельные уникальные слова (длинные в приоритете)
+    if(!sel.size){
+      o.toks.map((t,i)=>[t,i]).filter(([t])=>t.length>3&&!STOP.has(t)&&d1.get(t)===1).sort((x,y)=>y[0].length-x[0].length)
+        .slice(0,cap).forEach(([,i])=>sel.add(i));
+    }
+    res.set(o.id,{sel,uniq:phrase||ids.length===1});
+  });
+  return res;
 }
 function ans(a){
   const parts=a.split(/\n|\s\|\s|;\s/).map(x=>x.trim()).filter(Boolean);
-  return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hl(p)+'</li>').join('')+'</ul>':hl(a);
+  return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hlText(p)+'</li>').join('')+'</ul>':hlText(a);
 }
-const cardHtml=id=>{const it=S.items[id];return `<div class="card"><span class="bd">${esc(it.c)}</span><div class="lb">Вопрос</div><div class="q">${hl(it.q)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div></div>`};
+function cardHtml(id,um){
+  const it=S.items[id],ts=qToks(),u=um&&um.get(id);
+  const words=[...it.q.matchAll(RW)].map(m=>norm(m[0]));
+  const all=S.pref.hm&&ts.length&&ts.every(t=>words.some(w=>w.startsWith(t)));
+  return `<div class="card rc"><span class="bd">${esc(it.c)}</span>${all?'<span class="bd">Все слова совпали</span>':''}${u&&u.uniq?'<span class="bd">Уникален</span>':''}
+  <div class="lb">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div></div>`;
+}
 function stat(){const st=S.st;if(!st)return '';
   return st.t==='prog'?`<div class="bar"><i id="bar" style="width:${st.p}%"></i></div><div id="bl" class="mu">${st.m}</div>`:
   `<div class="${st.t==='err'?'er':'mu'}" style="margin:6px 0">${esc(st.m)}</div>${st.t==='err'?'<button class="btn" data-act="retry">Повторить</button>':''}`}
@@ -179,7 +236,8 @@ const histHtml=()=>S.hist.length?S.hist.map(h=>`<button class="chip" data-h="${e
 function resHtml(){
   if(!norm(S.q))return '<div class="mu" style="text-align:center;margin-top:24px">Введите слова или части слов в любом порядке</div>';
   if(!S.res.length)return '<div class="card" style="text-align:center"><b>Ничего не найдено</b><div class="mu">Проверьте ввод или смените раздел в настройках</div></div>';
-  return `<div class="mu" style="margin:4px 4px 8px">Найдено: ${S.res.length}</div>`+S.res.slice(0,S.lim).map(cardHtml).join('')+(S.res.length>S.lim?'<button class="btn s" data-act="more" style="width:100%">Показать ещё</button>':'');
+  const ids=S.res.slice(0,S.lim),um=S.pref.hu?uniqueMap(ids):null;
+  return `<div class="mu" style="margin:4px 4px 8px">Найдено: ${S.res.length}</div>`+ids.map(id=>cardHtml(id,um)).join('')+(S.res.length>S.lim?'<button class="btn s" data-act="more" style="width:100%">Показать ещё</button>':'');
 }
 function viewSearch(){
   if(S.loading)return '<div class="sk"></div><div class="sk"></div>';
@@ -198,23 +256,37 @@ function viewSet(){
   const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала:</div>
    <input type="date" id="pd" class="in" value="${today}"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
   return `<div class="card"><b>Режим работы</b><div class="g" style="margin-top:10px">${Object.entries(MODES).map(([k,n])=>`<button class="chip ${S.mode===k?'on':''}" data-mode="${k}">${n}</button>`).join('')}</div></div>
-  <div class="card"><b>База данных</b>
+  <div class="card">
+  <div class="row" style="justify-content:space-between"><b>База данных и поиск</b><button class="ib" data-act="clr" aria-label="Очистить базу этого режима">${I.t}</button></div>
   ${dev?'<div class="mu" style="margin-top:8px">Режим в разработке: функции появятся позже.</div>':`<div class="kv" style="margin-top:8px"><span>Материал от</span><b>${m.date||'—'}</b></div><div class="kv"><span>Вопросов в БД</span><b>${S.items.length}</b></div>${stat()}
-  <div class="row" style="margin-top:8px">${site?'<button class="btn s" data-act="upd">Проверить актуальность</button>':'<button class="btn s" data-act="load">Выгрузить БД</button>'}<button class="btn s" data-act="exp">Скачать БД</button></div>${p}`}</div>
-  <div class="card"><b>Поиск</b>
+  <div class="row" style="margin-top:8px">${site?'<button class="btn s" data-act="upd">Проверить актуальность</button>':'<button class="btn s" data-act="load">Выгрузить БД</button>'}<button class="btn s" data-act="exp">Скачать БД</button></div>${p}`}
+  <div class="div"></div>
   <label class="r">Раздел<select id="ct" style="width:60%"><option value="">Все (${S.items.length})</option>${cs.map(([c,n])=>`<option value="${esc(c)}" ${S.cat===c?'selected':''}>${esc(c)} (${n})</option>`).join('')}</select></label>
   <label class="r">Автопроверка при запуске<input type="checkbox" id="au" ${S.pref.auto?'checked':''} style="width:24px;height:24px"></label>
   <button class="btn s" data-act="clh">Очистить историю</button></div>
   <div class="card"><b>Системные</b>
   <label class="r">Тема<select id="th" style="width:60%">${opts(THEMES,S.pref.theme)}</select></label>
   <label class="r">Шрифт<select id="ft" style="width:60%">${opts(FONTS,S.pref.font)}</select></label>
-  <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label></div>`;
+  <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
+  <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
+  <div class="div"></div>
+  <label class="r"><span>Подсветка совпавших слов<br><small class="mu">бледно-жёлтым; «Все слова совпали» в строке раздела</small></span><input type="checkbox" id="hm" ${S.pref.hm?'checked':''} style="width:24px;height:24px"></label>
+  <label class="r"><span>Подсветка уникальных слов<br><small class="mu">бледно-салатовым; пересечение — смешанный цвет</small></span><input type="checkbox" id="hu" ${S.pref.hu?'checked':''} style="width:24px;height:24px"></label></div>`;
 }
 function render(){
-  $('#m').innerHTML=S.tab==='s'?viewSearch():viewSet();
+  const v=S.tab==='s'?viewSearch():viewSet(),an=S.lastTab!==S.tab;S.lastTab=S.tab;
+  $('#m').innerHTML=`<div class="${an?'view':''}">${v}</div>`;
   $('#nav').innerHTML=[['s','Поиск'],['g','Настройки']].map(([k,n])=>`<button class="${S.tab===k?'on':''}" data-tab="${k}" aria-label="${n}">${I[k]}${n}</button>`).join('');
 }
-function applyPref(){const r=document.documentElement;r.dataset.t=S.pref.theme;r.style.setProperty('--fs',S.pref.fs+'px');r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1])}
+function applyPref(){
+  const r=document.documentElement;let id=S.pref.theme;
+  if(id==='auto')id=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  if(!TH[id])id='light';
+  const v=TH[id][0].split(',');
+  ['bg','sf','tx','mu','ac','ac2','bd','on','m1','m2'].forEach((k,i)=>r.style.setProperty('--'+k,v[i]));
+  r.style.colorScheme=TH[id][1]?'dark':'light';
+  r.style.setProperty('--fs',S.pref.fs+'px');r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
+}
 const savePref=()=>kvSet('pref',S.pref);
 function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
 
@@ -222,12 +294,14 @@ function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
 let dt;
 document.addEventListener('input',e=>{
   const id=e.target.id;
-  if(id==='q'){S.q=e.target.value;S.lim=10;clearTimeout(dt);dt=setTimeout(()=>{search();$('#res').innerHTML=resHtml();
+  if(id==='q'){S.q=e.target.value;S.lim=S.pref.n;clearTimeout(dt);dt=setTimeout(()=>{search();$('#res').innerHTML=resHtml();
     clearTimeout(S.ht);S.ht=setTimeout(()=>{const n=norm(S.q);if(n.length>2&&S.res.length){S.hist=[n,...S.hist.filter(x=>x!==n)].slice(0,15);kvSet('hist',S.hist);const h=$('#hist');if(h)h.innerHTML=histHtml()}},1500)},30)}
-  if(id==='ct'){S.cat=e.target.value;S.lim=10;search();toast('Раздел: '+(S.cat||'Все'))}
+  if(id==='ct'){S.cat=e.target.value;S.lim=S.pref.n;search();toast('Раздел: '+(S.cat||'Все'))}
   if(id==='th'){S.pref.theme=e.target.value;applyPref();savePref()}
   if(id==='ft'){S.pref.font=e.target.value;applyPref();savePref()}
   if(id==='fs'){S.pref.fs=+e.target.value;$('#fsl').textContent=S.pref.fs+' px';applyPref();savePref()}
+  if(id==='nn'){S.pref.n=+e.target.value;S.lim=S.pref.n;$('#nl').textContent=S.pref.n;savePref()}
+  if(id==='hm'||id==='hu'){S.pref[id]=e.target.checked;savePref();if(S.q)search()}
   if(id==='au'){S.pref.auto=e.target.checked;savePref()}
 });
 document.addEventListener('click',async e=>{
@@ -239,13 +313,16 @@ document.addEventListener('click',async e=>{
   switch(d.act){
     case'upd':checkUpdate();break;
     case'retry':checkUpdate(true);break;
-    case'more':S.lim+=10;$('#res').innerHTML=resHtml();break;
+    case'more':S.lim+=S.pref.n;$('#res').innerHTML=resHtml();break;
     case'exp':dl();break;
     case'load':$('#file').click();break;
     case'pcancel':S.pend=null;render();break;
     case'psave':{const v=($('#pd').value||'').split('-'),date=v.length===3?v[2]+'.'+v[1]+'.'+v[0]:'';
       await kvSet('db_own',S.pend.out);S.meta.own={date,count:S.pend.out.length};await kvSet('meta',S.meta);
       S.pend=null;await loadActive();toast('База сохранена');vib();render();break}
+    case'clr':{const k={site:'db_site',own:'db_own'}[S.mode];if(!k){toast('В этом режиме данных пока нет');break}
+      if(!confirm('Очистить базу режима «'+MODES[S.mode]+'»? Данные будут удалены с телефона.'))break;
+      await kvDel(k);delete S.meta[S.mode];await kvSet('meta',S.meta);S.st=null;S.pend=null;await loadActive();toast('База очищена');vib();render();break}
     case'clh':S.hist=[];kvSet('hist',[]);toast('История очищена');break;
   }
 });
@@ -263,7 +340,7 @@ window.addEventListener('popstate',()=>{if(S.tab!=='s')go('s',false)});
   try{
     let mt=(await kvGet('meta'))||{};if(mt.date||mt.count)mt={site:mt};S.meta=mt;
     S.hist=(await kvGet('hist'))||[];Object.assign(S.pref,await kvGet('pref')||{});
-    S.mode=(await kvGet('mode'))||'site';if(!MODES[S.mode])S.mode='site';applyPref();await loadActive();
+    S.mode=(await kvGet('mode'))||'site';if(!MODES[S.mode])S.mode='site';applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;await loadActive();
   }catch(e){toast('Ошибка хранилища: '+e.message)}
   S.loading=false;render();
   if(S.mode==='site'){if(!S.items.length)checkUpdate(true);else if(S.pref.auto&&navigator.onLine)checkUpdate()}
