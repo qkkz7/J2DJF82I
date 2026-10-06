@@ -4,40 +4,40 @@
 <title>Помощник по вопросам</title>
 <style>
 :root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
-.kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;min-height:24px}.kv span{color:var(--mu)}
-.hist{padding:8px;max-height:64px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}.hist .chip{min-height:32px;font-size:13px}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:0.875rem;min-height:1.5rem}.kv span{color:var(--mu)}
+.hist{padding:8px;max-height:7rem;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}.hist .chip{min-height:2rem;font-size:0.8125rem}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.in{width:100%;min-height:48px;border-radius:14px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 12px;font:inherit;margin:8px 0}
+.in{width:100%;min-height:3rem;border-radius:14px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 12px;font:inherit;margin:8px 0}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--tx);font:var(--fs)/1.45 var(--ff,system-ui,sans-serif);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+body{background:var(--bg);color:var(--tx);font:1rem/1.45 var(--ff,system-ui,sans-serif);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 main{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;scroll-behavior:smooth}
 nav{display:flex;background:var(--sf);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;min-height:56px;border:0;background:none;color:var(--mu);font:inherit;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav button{flex:1;min-height:3.5rem;border:0;background:none;color:var(--mu);font:inherit;font-size:0.75rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 nav button.on{color:var(--ac);font-weight:700}
-svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg{width:1.375rem;height:1.375rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .card{background:var(--sf);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px #0002;transition:.2s}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{min-height:48px;padding:0 16px;border:0;border-radius:24px;background:var(--ac);color:var(--on);font:inherit;font-weight:600}
+.btn{min-height:3rem;padding:.4em 1em;border:0;border-radius:1.5rem;background:var(--ac);color:var(--on);font:inherit;font-weight:600}
 .btn.s{background:var(--ac2);color:var(--ac)}
-.ib{width:48px;height:48px;border:0;border-radius:24px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
+.ib{width:3rem;height:3rem;border:0;border-radius:24px;background:var(--ac2);color:var(--ac);display:grid;place-items:center}
 .ib.on{background:var(--ac);color:var(--on)}
-input[type=search],select{width:100%;min-height:52px;border-radius:26px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 18px;font:inherit}
+input[type=search],select{width:100%;min-height:3.25rem;border-radius:26px;border:2px solid var(--bd);background:var(--sf);color:var(--tx);padding:0 18px;font:inherit}
 input[type=search]:focus{outline:0;border-color:var(--ac)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
-.chip{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:14px}
+.chip{flex:none;min-height:2.5rem;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:0.875rem}
 .chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
-.a ul{margin:0;padding-left:20px}.lb{font-size:12px;color:var(--mu);margin-top:8px}
-.bd{display:inline-block;font-size:12px;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
-.mu{color:var(--mu);font-size:14px}.er{color:var(--er)}
-.bar{height:10px;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
-.sk{height:90px;border-radius:20px;background:linear-gradient(90deg,var(--sf),var(--ac2),var(--sf));background-size:200%;animation:sk 1.2s infinite;margin-bottom:12px}
+.a ul{margin:0;padding-left:20px}.lb{font-size:0.75rem;color:var(--mu);margin-top:8px}
+.bd{display:inline-block;font-size:0.75rem;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
+.mu{color:var(--mu);font-size:0.875rem}.er{color:var(--er)}
+.bar{height:0.625rem;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
+.sk{height:5.625rem;border-radius:20px;background:linear-gradient(90deg,var(--sf),var(--ac2),var(--sf));background-size:200%;animation:sk 1.2s infinite;margin-bottom:12px}
 @keyframes sk{to{background-position:-200%}}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));background:#322f37;color:#fff;border-radius:14px;padding:12px 16px;opacity:0;pointer-events:none;transition:.2s;text-align:center}
 #toast.on{opacity:1}
-.sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:42px;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
-label.r{display:flex;justify-content:space-between;align-items:center;min-height:48px}
+.sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:2.625rem;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
+label.r{display:flex;justify-content:space-between;align-items:center;min-height:3rem}
 option{background:var(--sf);color:var(--tx)}
 input[type=checkbox]{accent-color:var(--ac)}
 mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
@@ -60,15 +60,21 @@ nav button.on svg{animation:pop .3s}
 .shp{position:absolute;left:0;right:0;bottom:0;background:var(--sf);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:82vh;overflow-y:auto;box-shadow:0 -4px 20px #0004}
 .sh.on{pointer-events:auto}.sh.on .shb{opacity:1}.sh.on .shp{transform:none}
 .shp h3{margin:0 0 12px}
-.pick{width:100%;min-height:52px;display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;background:none;color:var(--tx);font:inherit;padding:0 2px}
+.pick{width:100%;min-height:3.25rem;display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;background:none;color:var(--tx);font:inherit;padding:0 2px}
 .pick b{color:var(--ac);font-weight:600;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.tile{border:1px solid var(--bd);border-radius:16px;background:var(--sf);color:var(--tx);font:inherit;font-size:13px;padding:6px;display:flex;flex-direction:column;gap:6px;align-items:center;transition:transform .12s}
+.tile{border:1px solid var(--bd);border-radius:16px;background:var(--sf);color:var(--tx);font:inherit;font-size:0.8125rem;padding:6px;display:flex;flex-direction:column;gap:6px;align-items:center;transition:transform .12s}
 .tile:active{transform:scale(.95)}.tile.on{outline:3px solid var(--ac)}
-.pv{width:100%;height:54px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700}
-.pv i{width:14px;height:14px;border-radius:7px}
-.opt{width:100%;display:flex;flex-direction:column;align-items:flex-start;border:0;border-radius:14px;background:none;color:var(--tx);font:inherit;padding:10px 12px;margin-bottom:4px;min-height:52px;text-align:left}
+.pv{width:100%;height:3.375rem;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700}
+.pv i{width:0.875rem;height:0.875rem;border-radius:7px}
+.opt{width:100%;display:flex;flex-direction:column;align-items:flex-start;border:0;border-radius:14px;background:none;color:var(--tx);font:inherit;padding:10px 12px;margin-bottom:4px;min-height:3.25rem;text-align:left}
 .opt small{color:var(--mu)}.opt.on{background:var(--ac2);color:var(--ac)}
+.tg2{font-size:0.75rem;padding:2px 8px;border-radius:10px;margin-left:8px;font-weight:600}
+.okc{background:var(--m2);color:var(--tx)}.old{background:#f5c6c2;color:#601410}
+.g .btn{padding:6px 10px;font-size:0.875rem;line-height:1.2}
+.tp{background:var(--ac2);color:var(--ac)}
+.tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
+label.r{gap:8px;padding:4px 0}
 </style></head><body>
 <main id="m"></main>
 <div id="toast"></div>
@@ -134,58 +140,67 @@ function search(){
 }
 
 /* ═══ state ═══ */
-const MODES={site:'Сайт',own:'Своя',site2:'Сайт 2.0',own2:'Своя 2.0'};
-const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',blue:'Голубая',sepia:'Сепия',retro:'Ретро',gray:'Серая'};
+const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',blue:'Голубая',sepia:'Сепия',gray:'Серая'};
 /* палитры: bg,sf,tx,mu,ac,ac2,bd,on,m1(совпадение),m2(уникальное); последний флаг — тёмная */
 const TH={light:['#f6f4fb,#ffffff,#1d1b20,#6b6775,#5b3fd1,#e9e2ff,#e3dff0,#ffffff,#fff3a6,#c6efbd',0],
 dark:['#141218,#1f1b26,#ece6f2,#a9a3b5,#b9a6ff,#352c58,#332e3d,#1d1b20,#6a5f1c,#25572e',1],
 blue:['#eaf2fb,#ffffff,#12263f,#566b85,#1565c0,#d9e8fa,#c9dbf0,#ffffff,#fff1a0,#bfeac4',0],
 sepia:['#f4ecd8,#fbf5e6,#3b2f1e,#7a6a52,#9a5b1f,#efe0c2,#e0d2b4,#ffffff,#f6e08a,#cfe4a8',0],
-retro:['#2a1b38,#3a2650,#ffe9b0,#c9b0e0,#ff6ec7,#4c3069,#5d3d80,#2a1b38,#7a6420,#2f6b4d',1],
 gray:['#dcdee1,#eceef0,#1c1e21,#555a60,#3d4b5c,#cdd2d8,#bcc2c9,#ffffff,#f3e58f,#bfe0b8',0]};
 const FONTS={sys:['Системный','system-ui,sans-serif'],serif:['С засечками','Georgia,"Times New Roman",serif'],mono:['Моноширинный','ui-monospace,Menlo,Consolas,monospace'],round:['Округлый','"Trebuchet MS","Segoe UI",sans-serif']};
-const S={tab:'s',mode:'site',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10},meta:{},st:null,pend:null};
+const S={tab:'s',mode:'site',remote:'',retry:'inst',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10},meta:{},st:null,pend:null};
 const $=s=>document.querySelector(s);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vib=()=>navigator.vibrate&&navigator.vibrate(15);
-const metaNow=()=>S.meta[S.mode]||{};
-const isDev=()=>S.mode.endsWith('2');
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)}
 const RW=/[A-Za-zА-Яа-яЁё0-9]+/g;
 const I={t:'<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>',s:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
  g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'};
 
 /* ═══ data ═══ */
-async function loadActive(){
-  const k={site:'db_site',own:'db_own'}[S.mode];
-  S.items=k?(await kvGet(k))||[]:[];S.q='';S.cat='';S.lim=S.pref.n;build(S.items);search();
+const MODES={site:'Сайт',site2:'Сайт 2.0'};
+const dbK=()=>S.mode==='site'?'db':'db_s2',metaK=()=>S.mode==='site'?'meta2':'meta_s2';
+async function loadActive(){S.items=(await kvGet(dbK()))||[];S.q='';S.cat='';S.lim=S.pref.n;build(S.items);search()}
+/* дата актуальности на сайте */
+async function remoteDate(){
+  const html=await fetchText(SITE+'/'),mt=/Материал обновл[её]н\s+(\d{2}\.\d{2}\.\d{4})/.exec(html);
+  if(!mt)throw Error('Не удалось найти дату на странице');return mt[1];
 }
-async function checkUpdate(force){
-  S.st={t:'msg',m:'Проверяю сайт…'};render();
+const dnum=d=>{const [a,b,c]=d.split('.');return +c*10000+ +b*100+ +a};
+/* только узнаём дату на сайте, ничего не устанавливаем. silent — без сообщений (автопроверка) */
+async function checkRemote(silent){
+  if(!silent){S.st={t:'msg',m:'Проверяю сайт…'};S.retry='chk';render()}
   try{
-    const html=await fetchText(SITE+'/'),mt=/Материал обновл[её]н\s+(\d{2}\.\d{2}\.\d{4})/.exec(html);
-    if(!mt)throw Error('Не удалось найти дату на странице');
-    const d=mt[1],cur=S.meta.site;
-    if(!force&&cur&&cur.date===d&&(await kvGet('db_site'))){S.st={t:'msg',m:'У вас актуальная база ('+d+')'};render();return}
-    S.st={t:'prog',p:0,m:'Загрузка базы…'};render();
+    const d=await remoteDate();S.remote=d;const cur=S.meta.date;
+    if(!silent)S.st={t:'msg',m:'Дата материала на сайте: '+d+(!S.items.length||!cur?'':dnum(cur)>=dnum(d)?'. У вас актуальная база':'. Ваш материал устарел')};
+  }catch(e){if(!silent)S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
+  silent?refreshHead():render();
+}
+/* установка актуальной БД с сайта; старая заменяется только после проверки новой */
+async function installRemote(){
+  S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
+  try{
+    const d=await remoteDate();S.remote=d;S.st={t:'prog',p:0,m:'Загрузка базы…'};render();
     const text=await fetchJsonProgress(JSON_URL,(n,tot,sp)=>{S.st={t:'prog',p:tot?n/tot*100:0,m:'Загрузка: '+(n/1048576).toFixed(1)+(tot?' / '+(tot/1048576).toFixed(1):'')+' МБ'+(sp?', '+(sp/1048576).toFixed(2)+' МБ/с':'')};upBar()});
     S.st={t:'msg',m:'Обработка и индексация…'};render();await new Promise(r=>setTimeout(r,30));
     let arr;try{arr=JSON.parse(text)}catch(e){throw Error('Файл повреждён: это не корректный JSON')}
-    const{out}=validate(arr);await kvSet('db_site',out);
-    S.meta.site={date:d,count:out.length};await kvSet('meta',S.meta);
-    if(S.mode==='site')await loadActive();
-    S.st={t:'msg',m:'Готово: '+out.length+' вопросов, дата '+d};vib();
+    const{out}=validate(arr);await kvSet(dbK(),out);
+    S.meta={type:'site',date:d,count:out.length};await kvSet(metaK(),S.meta);await loadActive();
+    S.st={t:'msg',m:'Установлено: '+out.length+' вопросов, материал от '+d};vib();
   }catch(e){S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   render();
 }
 function upBar(){const b=$('#bar');if(b)b.style.width=S.st.p+'%';const l=$('#bl');if(l)l.textContent=S.st.m+(S.st.p?' ('+Math.round(S.st.p)+'%)':'')}
+/* сохранение текущей базы в Download: «questions_<дата>.json» */
 async function dl(){
   if(!S.items.length)return toast('База пуста');
-  const bl=new Blob([JSON.stringify(S.items.map(({q,a,c,u})=>({q,a,c,u})))],{type:'application/json'}),f=new File([bl],'questions_'+S.mode+'.json',{type:'application/json'});
-  if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});
-  else{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=f.name;a.click()}
+  const name='questions_'+(S.meta.date||'без_даты')+'.json',data=JSON.stringify(S.items.map(({q,a,c,u})=>({q,a,c,u})));
+  const FS=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem;
+  if(FS){try{await FS.requestPermissions().catch(()=>{});
+    await FS.writeFile({path:'Download/'+name,data,directory:'EXTERNAL_STORAGE',encoding:'utf8',recursive:true});
+    return toast('Сохранено: Download/'+name)}catch(e){console.warn(e)}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;a.click();
 }
-
 /* ═══ ui ═══ */
 /* слова запроса (нормализованные) */
 const qToks=()=>norm(S.q).split(' ').filter(Boolean);
@@ -220,22 +235,22 @@ function ans(a){
   return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hlText(p)+'</li>').join('')+'</ul>':hlText(a);
 }
 function cardHtml(id,um){
-  const it=S.items[id],ts=qToks(),u=um&&um.get(id);
-  const words=[...it.q.matchAll(RW)].map(m=>norm(m[0]));
-  const all=S.pref.hm&&ts.length&&ts.every(t=>words.some(w=>w.startsWith(t)));
-  return `<div class="card rc"><span class="bd">${esc(it.c)}</span>${all?'<span class="bd">Все слова совпали</span>':''}${u&&u.uniq?'<span class="bd">Уникален</span>':''}
+  const it=S.items[id],u=um&&um.get(id);
+  return `<div class="card rc"><span class="bd">${esc(it.c)}</span>
   <div class="lb">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div></div>`;
 }
 function stat(){const st=S.st;if(!st)return '';
   return st.t==='prog'?`<div class="bar"><i id="bar" style="width:${st.p}%"></i></div><div id="bl" class="mu">${st.m}</div>`:
-  `<div class="${st.t==='err'?'er':'mu'}" style="margin:6px 0">${esc(st.m)}</div>${st.t==='err'?'<button class="btn" data-act="retry">Повторить</button>':''}`}
-function head(){
-  const m=metaNow();
-  return `<div class="card" style="padding:12px 14px"><div class="kv"><span>Режим работы:</span><b>${MODES[S.mode]}</b></div>
-  <div class="kv"><span>Материал от:</span><b>${isDev()?'—':m.date||'—'}</b></div>
-  <div class="kv"><span>Вопросов в БД:</span><b>${S.items.length}</b></div>
-  <div class="kv"><span>Раздел:</span><b>${esc(S.cat||'Все')}</b></div></div>`;
+  `<div class="${st.t==='err'?'er':'mu'}" style="margin:6px 0">${esc(st.m)}</div>${st.t==='err'?`<button class="btn" data-act="${S.retry}">Повторить</button>`:''}`}
+/* Материал: актуальна / устарел (сравнение с датой на сайте) */
+function badge(){
+  if(!S.remote||!S.meta.date||!S.items.length)return '';
+  return dnum(S.meta.date)>=dnum(S.remote)?'<span class="tg2 okc">Актуальна</span>':`<span class="tg2 old">Устарел: ${S.remote}</span>`;
 }
+const typeName=()=>S.meta.type==='own'?'Своя':S.meta.type==='site'?'Сайт':'—';
+const infoRows=()=>`<div class="kv"><span>Режим работы:</span><b>${MODES[S.mode]}${S.meta.type?`<span class="tg2 tp">БД ${typeName()}</span>`:''}</b></div><div class="kv"><span>Материал от:</span><b>${S.meta.date||'—'}${badge()}</b></div><div class="kv"><span>Вопросов:</span><b>${S.items.length}</b></div>`;
+const head=()=>`<div class="card" id="hd" style="padding:12px 14px">${infoRows()}<div class="kv"><span>Раздел:</span><b>${esc(S.cat||'Все')}</b></div></div>`;
+const refreshHead=()=>{const e=$('#hd');if(e)e.outerHTML=head()};
 const histHtml=()=>S.hist.length?S.hist.map(h=>`<button class="chip" data-h="${esc(h)}">${esc(h)}</button>`).join(''):'<span class="mu">История поиска пуста</span>';
 function resHtml(){
   if(!norm(S.q))return '<div class="mu" style="text-align:center;margin-top:24px">Введите слова или части слов в любом порядке</div>';
@@ -245,37 +260,33 @@ function resHtml(){
 }
 function viewSearch(){
   if(S.loading)return '<div class="sk"></div><div class="sk"></div>';
-  if(!S.items.length){
-    const b=isDev()?'<div class="mu">Режим в разработке</div>':S.mode==='site'?'<div class="mu" style="margin:6px 0 12px">Установите базу с сайта (нужен интернет один раз).</div><button class="btn" data-act="retry">Установить базу</button>':'<div class="mu" style="margin:6px 0 12px">Загрузите свой JSON-файл в настройках.</div><button class="btn" data-tab="g">Открыть настройки</button>';
-    return head()+stat()+`<div class="card" style="text-align:center"><b>Базы нет</b>${b}</div>`;
-  }
+  if(!S.items.length)return head()+stat()+`<div class="card" style="text-align:center"><b>Базы нет</b><div class="mu" style="margin:6px 0 12px">Установите актуальную базу с сайта (интернет нужен один раз) или выгрузите свой JSON-файл в настройках.</div><div class="row" style="justify-content:center"><button class="btn" data-act="inst">Установить актуальную БД</button><button class="btn s" data-tab="g">Настройки</button></div></div>`;
   return head()+stat()+`<div class="card hist" id="hist">${histHtml()}</div>
   <input type="search" id="q" placeholder="Поиск: например «боков ролик 500»" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
   <div id="res" style="margin-top:12px">${resHtml()}</div>`;
 }
 const opts=(o,v)=>Object.entries(o).map(([k,n])=>`<option value="${k}" ${k===v?'selected':''}>${Array.isArray(n)?n[0]:n}</option>`).join('');
 function viewSet(){
-  const dev=isDev(),m=metaNow(),site=S.mode==='site',cs=Object.entries(S.cats).sort((a,b)=>b[1]-a[1]);
-  const today=new Date().toISOString().slice(0,10);
-  const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала:</div>
-   <input type="date" id="pd" class="in" value="${today}"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
+  const chk=(id,on)=>`<input type="checkbox" id="${id}" ${on?'checked':''} style="width:1.5rem;height:1.5rem;flex:none">`;
+  const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала (ДД.ММ.ГГГГ):</div>
+   <input type="text" id="pd" class="in" inputmode="numeric" placeholder="01.01.2000" maxlength="10"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
   return `<div class="card"><b>Режим работы</b><div class="g" style="margin-top:10px">${Object.entries(MODES).map(([k,n])=>`<button class="chip ${S.mode===k?'on':''}" data-mode="${k}">${n}</button>`).join('')}</div></div>
   <div class="card">
-  <div class="row" style="justify-content:space-between"><b>База данных и поиск</b><button class="ib" data-act="clr" aria-label="Очистить базу этого режима">${I.t}</button></div>
-  ${dev?'<div class="mu" style="margin-top:8px">Режим в разработке: функции появятся позже.</div>':`<div class="kv" style="margin-top:8px"><span>Материал от</span><b>${m.date||'—'}</b></div><div class="kv"><span>Вопросов в БД</span><b>${S.items.length}</b></div>${stat()}
-  <div class="row" style="margin-top:8px">${site?'<button class="btn s" data-act="upd">Проверить актуальность</button>':'<button class="btn s" data-act="load">Выгрузить БД</button>'}<button class="btn s" data-act="exp">Скачать БД</button></div>${p}`}
+  <div class="row" style="justify-content:space-between"><b>База данных</b><button class="ib" data-act="clr" aria-label="Очистить базу">${I.t}</button></div>
+  <div style="margin-top:8px">${infoRows()}</div>${stat()}
+  <div class="g" style="margin-top:10px"><button class="btn s" data-act="chk">Проверить актуальность</button><button class="btn s" data-act="inst">Установить актуальную БД</button><button class="btn s" data-act="load">Выгрузить БД</button><button class="btn s" data-act="exp">Скачать БД</button></div>${p}
   <div class="div"></div>
   ${row("cat","Раздел",S.cat||"Все")}
-  <label class="r">Автопроверка при запуске<input type="checkbox" id="au" ${S.pref.auto?'checked':''} style="width:24px;height:24px"></label>
-  <button class="btn s" data-act="clh">Очистить историю</button></div>
+  <label class="r">Автопроверка при запуске${chk('au',S.pref.auto)}</label>
+  <button class="btn s" data-act="clh">Очистить историю поиска</button></div>
   <div class="card"><b>Системные</b>
   ${row("theme","Тема",THEMES[S.pref.theme])}
   ${row("font","Шрифт",FONTS[S.pref.font][0])}
   <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
   <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
   <div class="div"></div>
-  <label class="r"><span>Подсветка совпавших слов<br><small class="mu">бледно-жёлтым; «Все слова совпали» в строке раздела</small></span><input type="checkbox" id="hm" ${S.pref.hm?'checked':''} style="width:24px;height:24px"></label>
-  <label class="r"><span>Подсветка уникальных слов<br><small class="mu">бледно-зелёным, приоритет над жёлтым; слова, которых нет в других найденных вопросах</small></span><input type="checkbox" id="hu" ${S.pref.hu?'checked':''} style="width:24px;height:24px"></label></div>`;
+  <label class="r"><span class="tx"><b>Подсветка желтым</b><span class="sub">Слова совпавшие с теми что вы ввели в поиск подсвечены желтым</span></span>${chk('hm',S.pref.hm)}</label>
+  <label class="r"><span class="tx"><b>Подсветка зеленым</b><span class="sub">Слова являющиеся уникальными для вопроса подсвечены зеленым</span></span>${chk('hu',S.pref.hu)}</label></div>`;
 }
 function render(){
   const v=S.tab==='s'?viewSearch():viewSet(),an=S.lastTab!==S.tab;S.lastTab=S.tab;
@@ -289,7 +300,7 @@ function applyPref(){
   const v=TH[id][0].split(',');
   ['bg','sf','tx','mu','ac','ac2','bd','on','m1','m2'].forEach((k,i)=>r.style.setProperty('--'+k,v[i]));
   r.style.colorScheme=TH[id][1]?'dark':'light';
-  r.style.setProperty('--fs',S.pref.fs+'px');r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
+  r.style.fontSize=S.pref.fs+'px';r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
 }
 const savePref=()=>kvSet('pref',S.pref);
 const row=(k,l,v)=>`<button class="pick" data-act="pk" data-k="${k}"><span>${l}</span><b>${esc(String(v))} ›</b></button>`;
@@ -309,6 +320,7 @@ function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
 let dt;
 document.addEventListener('input',e=>{
   const id=e.target.id;
+  if(id==='pd'){const d=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=d.slice(0,2)+(d.length>2?'.':'')+d.slice(2,4)+(d.length>4?'.':'')+d.slice(4)}
   if(id==='q'){S.q=e.target.value;S.lim=S.pref.n;clearTimeout(dt);dt=setTimeout(()=>{search();$('#res').innerHTML=resHtml();
     clearTimeout(S.ht);S.ht=setTimeout(()=>{const n=norm(S.q);if(n.length>2&&S.res.length){S.hist=[n,...S.hist.filter(x=>x!==n)].slice(0,15);kvSet('hist',S.hist);const h=$('#hist');if(h)h.innerHTML=histHtml()}},1500)},30)}
   if(id==='ct'){S.cat=e.target.value;S.lim=S.pref.n;search();toast('Раздел: '+(S.cat||'Все'))}
@@ -324,7 +336,7 @@ document.addEventListener('click',async e=>{
   const d=b.dataset;
   if(d.tab)return go(d.tab);
   if(d.h){S.q=d.h;render();search();$('#res').innerHTML=resHtml();return}
-  if(d.mode){S.mode=d.mode;S.st=null;S.pend=null;await kvSet('mode',S.mode);await loadActive();vib();return render()}
+  if(d.mode){S.mode=d.mode;S.st=null;S.pend=null;await kvSet('mode2',S.mode);S.meta=(await kvGet(metaK()))||{};await loadActive();vib();return render()}
   if(d.close){closeSheet();return}
   if(d.pv){const i=d.pv.indexOf('|'),k=d.pv.slice(0,i),v=d.pv.slice(i+1);
     if(k==='theme'){S.pref.theme=v;applyPref();savePref()}
@@ -332,23 +344,25 @@ document.addEventListener('click',async e=>{
     if(k==='cat'){S.cat=v;S.lim=S.pref.n;search()}
     vib();closeSheet();render();return}
   switch(d.act){
-    case'upd':checkUpdate();break;
-    case'retry':checkUpdate(true);break;
+    case'chk':checkRemote();break;
+    case'inst':
+      if(S.meta.type==='own'&&S.items.length){sheet(`<h3>Заменить свою базу?</h3><p class="mu">Ваша база (${S.items.length} вопросов) будет заменена актуальной с сайта. Скачайте её заранее, если она нужна.</p><div class="row"><button class="btn s" data-close="1" style="flex:1">Отмена</button><button class="btn" data-act="instok" style="flex:1">Заменить</button></div>`);break}
+    case'instok':closeSheet();installRemote();break;
     case'more':S.lim+=S.pref.n;$('#res').innerHTML=resHtml();break;
     case'exp':dl();break;
     case'load':$('#file').click();break;
     case'pcancel':S.pend=null;render();break;
-    case'psave':{const v=($('#pd').value||'').split('-'),date=v.length===3?v[2]+'.'+v[1]+'.'+v[0]:'';
-      await kvSet('db_own',S.pend.out);S.meta.own={date,count:S.pend.out.length};await kvSet('meta',S.meta);
-      S.pend=null;await loadActive();toast('База сохранена');vib();render();break}
+    case'psave':{const dt=$('#pd').value.trim(),m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(dt);
+      if(!m||+m[1]<1||+m[1]>31||+m[2]<1||+m[2]>12)return toast('Введите дату в формате ДД.ММ.ГГГГ, например 01.01.2000');
+      await kvSet(dbK(),S.pend.out);S.meta={type:'own',date:dt,count:S.pend.out.length};await kvSet(metaK(),S.meta);
+      S.pend=null;S.st=null;await loadActive();toast('База сохранена');vib();render();break}
     case'pk':openPick(d.k);break;
     case'clr':{
-      if(!{site:1,own:1}[S.mode]){toast('В этом режиме данных пока нет');break}
-      sheet(`<h3>Очистить базу?</h3><p class="mu">Режим «${MODES[S.mode]}»: ${S.items.length} вопросов будут удалены с телефона. Действие нельзя отменить.</p>
+      if(!S.items.length){toast('База уже пуста');break}
+      sheet(`<h3>Очистить базу?</h3><p class="mu">База «${typeName()}» (${S.items.length} вопросов) будет удалена с телефона. Действие нельзя отменить.</p>
       <div class="row"><button class="btn s" data-close="1" style="flex:1">Отмена</button><button class="btn" data-act="clrok" style="flex:1;background:#b3261e;color:#fff">Удалить</button></div>`);break}
-    case'clrok':{const k={site:'db_site',own:'db_own'}[S.mode];closeSheet();
-      await kvDel(k);delete S.meta[S.mode];await kvSet('meta',S.meta);S.st=null;S.pend=null;await loadActive();toast('База очищена');vib();render();break}
     case'clh':S.hist=[];kvSet('hist',[]);toast('История очищена');break;
+    case'clrok':closeSheet();await kvDel(dbK());S.meta={};await kvSet(metaK(),{});S.st=null;S.pend=null;await loadActive();toast('База очищена');vib();render();break
   }
 });
 $('#file').addEventListener('change',async e=>{
@@ -363,11 +377,18 @@ window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){cl
 (async()=>{
   S.loading=true;render();
   try{
-    let mt=(await kvGet('meta'))||{};if(mt.date||mt.count)mt={site:mt};S.meta=mt;
+    S.mode=(await kvGet('mode2'))||'site';if(!MODES[S.mode])S.mode='site';
+    S.meta=(await kvGet(metaK()))||{};
+    if(S.mode==='site'&&!(await kvGet(dbK()))){ // перенос из старой версии (две отдельные базы)
+      const om=(await kvGet('meta'))||{},m0=await kvGet('mode')==='own'?'own':'site';
+      for(const t of [m0,m0==='own'?'site':'own']){const d=await kvGet('db_'+t);
+        if(d&&d.length){await kvSet(dbK(),d);S.meta={type:t,date:(om[t]||(t==='site'?om:{})).date||'',count:d.length};await kvSet(metaK(),S.meta);break}}
+    }
     S.hist=(await kvGet('hist'))||[];Object.assign(S.pref,await kvGet('pref')||{});
-    S.mode=(await kvGet('mode'))||'site';if(!MODES[S.mode])S.mode='site';applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;await loadActive();
+    if(!THEMES[S.pref.theme])S.pref.theme='auto';
+    applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;await loadActive();
   }catch(e){toast('Ошибка хранилища: '+e.message)}
   S.loading=false;render();
-  if(S.mode==='site'){if(!S.items.length)checkUpdate(true);else if(S.pref.auto&&navigator.onLine)checkUpdate()}
+  if(S.pref.auto&&navigator.onLine)checkRemote(true);
 })();
 </script></body></html>
