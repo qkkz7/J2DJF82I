@@ -29,10 +29,15 @@ input[type=search]:focus{outline:0;border-color:var(--ac)}
 .chip{flex:none;min-height:2.5rem;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:0.875rem}
 .chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
-.a ul{margin:0;padding-left:20px}.lb{font-size:0.75rem;color:var(--mu);margin-top:8px}
-/* «Вопрос» / «Ответ» — теперь как сам вопрос */
-.lb.big{font-size:1rem;font-weight:600;color:var(--tx)}
+.a ul{margin:0;padding-left:0;list-style:none}
+.a li{padding:2px 0}.a li::before{content:'— ';color:var(--ac);font-weight:700}
+.lb{font-size:0.75rem;color:var(--mu);margin-top:8px}
+.lb.big{font-size:1rem;color:var(--mu)}
 .bd{display:inline-block;font-size:0.75rem;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
+/* верхняя строка карточки: раздел + табло */
+.chipshead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.chipshead .bd{margin-bottom:0}
+.multi{background:var(--ac2);color:var(--ac);font-size:0.75rem;padding:2px 10px;border-radius:10px;font-weight:600}
 .mu{color:var(--mu);font-size:0.875rem}.er{color:var(--er)}
 .bar{height:0.625rem;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
 .sk{height:5.625rem;border-radius:20px;background:linear-gradient(90deg,var(--sf),var(--ac2),var(--sf));background-size:200%;animation:sk 1.2s infinite;margin-bottom:12px}
@@ -46,7 +51,6 @@ input[type=checkbox]{accent-color:var(--ac)}
 mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
 .m1{background:var(--m1)}.m2{background:var(--m2)}.m3{background:#d9ef9c;background:color-mix(in srgb,var(--m1) 50%,var(--m2) 50%)}
 .div{height:1px;background:var(--bd);margin:12px 0}
-.bd{margin-right:6px}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes fi{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
 @keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -76,10 +80,7 @@ nav button.on svg{animation:pop .3s}
 .okc{background:var(--m2);color:var(--tx)}.old{background:#f5c6c2;color:#601410}
 .g .btn{padding:6px 10px;font-size:0.875rem;line-height:1.2}
 .tp{background:var(--ac2);color:var(--ac)}
-/* Плашка «Содержит несколько верных ответов» — цвет из темы */
-.multi{background:var(--ac2);color:var(--ac);font-size:0.75rem;padding:2px 10px;border-radius:10px;font-weight:600;margin-left:8px}
 .tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
-/* ═══ D-Glass ═══ */
 @keyframes drift{from{background-position:0 0,100% 100%}to{background-position:10% 6%,90% 94%}}
 [data-th=glass] body{background-image:radial-gradient(60% 36% at 12% 6%,#3574F030,transparent 70%),radial-gradient(55% 34% at 95% 100%,#FF6B6822,transparent 70%);background-size:150% 150%;background-repeat:no-repeat;animation:drift 24s ease-in-out infinite alternate}
 [data-th=glass] svg{stroke-width:1.6}
@@ -119,6 +120,7 @@ details.acc[open]>summary::after{content:'−'}
 details.acc>.body{padding:0 12px 12px;color:var(--tx);font-weight:400;font-size:0.95rem;white-space:pre-wrap}
 details.acc>.body ul{margin:0;padding-left:0;list-style:none}
 details.acc>.body li{padding:4px 0}
+details.acc>.body li::before{content:'— ';color:var(--ac);font-weight:700}
 details.acc>.body li + li{border-top:1px solid var(--bd);margin-top:4px;padding-top:8px}
 </style></head><body>
 <main id="m"></main>
@@ -210,7 +212,6 @@ light:['Тонкий','sans-serif-light,"Roboto Light",sans-serif'],
 casual:['Рукописный','casual,"Coming Soon",cursive'],
 archivo:['Archivo Black','"Archivo Black",system-ui,sans-serif']};
 
-/* Режимы: site — 1.0 (старый формат), site2 — 2.0 (расширенный) */
 const MODES={site:'1.0',site2:'2.0'};
 const isS2=()=>S.mode==='site2';
 const dbK=()=>isS2()?'db_s2':'db';
@@ -270,7 +271,7 @@ function parseCardHtml(html,anchor){
       const chip=why.querySelector('.chip');
       if(chip){const src=chip.textContent.trim();if(src){if(!/[.!?]$/.test(explain))explain+='.';explain+=' '+src}}
     }
-    return {q:question,a:clist,/* массив правильных */v:options,o:explain};
+    return {q:question,a:clist,v:options,o:explain};
   }catch(e){return null}
 }
 async function fetchCard(u){
@@ -278,7 +279,6 @@ async function fetchCard(u){
   const parts=u.split('#'),pagePath=parts[0],anchor=parts[1]||'';
   try{const html=await fetchText(SITE+pagePath);return parseCardHtml(html,anchor)}catch(e){return null}
 }
-
 async function installRemote2(){
   S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
   try{
@@ -301,7 +301,6 @@ async function installRemote2(){
       let row={q:it.q,a:it.a,c:it.c,u:it.u||'',v:[],o:''};
       if(it.u){const card=await fetchCard(it.u);
         if(card){
-          /* правильных может быть несколько — тогда склеиваем через " \n " */
           const a=Array.isArray(card.a)&&card.a.length?card.a.join('\n'):it.a;
           row={q:it.q,a,c:it.c,u:it.u,v:card.v,o:card.o};
         }}
@@ -375,17 +374,15 @@ function uniqueMap(ids){
   return res;
 }
 function ans(a){
-  /* делим по переносам, | и ; — на случай множественных правильных */
   const parts=String(a||'').split(/\n|\s\|\s|;\s/).map(x=>x.trim()).filter(Boolean);
   return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hlText(p)+'</li>').join('')+'</ul>':hlText(a||'');
 }
-/* считаем, есть ли у вопроса более одного правильного ответа (хранится как строка с \n) */
 const isMulti=(it)=>typeof it.a==='string'&&/\n/.test(it.a);
 function cardHtml(id,um){
   const it=S.items[id],u=um&&um.get(id);
   const multi=isS2()&&isMulti(it)?'<span class="multi">Содержит несколько верных ответов</span>':'';
-  const base=`<div class="card rc"><span class="bd">${esc(it.c)}</span>${multi}
-  <div class="lb big">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb big">Ответ</div><div class="a">${ans(it.a)}</div>`;
+  const base=`<div class="card rc"><div class="chipshead"><span class="bd">${esc(it.c)}</span>${multi}</div>
+  <div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb big">Ответ</div><div class="a">${ans(it.a)}</div>`;
   if(!isS2())return base+'</div>';
   const key=String(id);
   const openV=!!S.open[key+'|v'],openO=!!S.open[key+'|o'];
