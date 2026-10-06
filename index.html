@@ -38,7 +38,7 @@ input[type=search]:focus{outline:0;border-color:var(--ac)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));background:#322f37;color:#fff;border-radius:14px;padding:12px 16px;opacity:0;pointer-events:none;transition:.2s;text-align:center}
 #toast.on{opacity:1}
 .sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:2.625rem;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
-label.r{display:flex;justify-content:space-between;align-items:center;min-height:3rem}
+label.r{display:flex;justify-content:space-between;align-items:center;min-height:3rem;gap:8px;padding:4px 0}
 option{background:var(--sf);color:var(--tx)}
 input[type=checkbox]{accent-color:var(--ac)}
 mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
@@ -75,7 +75,6 @@ nav button.on svg{animation:pop .3s}
 .g .btn{padding:6px 10px;font-size:0.875rem;line-height:1.2}
 .tp{background:var(--ac2);color:var(--ac)}
 .tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
-label.r{gap:8px;padding:4px 0}
 /* ═══ D-Glass ═══ */
 @keyframes drift{from{background-position:0 0,100% 100%}to{background-position:10% 6%,90% 94%}}
 [data-th=glass] body{background-image:radial-gradient(60% 36% at 12% 6%,#3574F030,transparent 70%),radial-gradient(55% 34% at 95% 100%,#FF6B6822,transparent 70%);background-size:150% 150%;background-repeat:no-repeat;animation:drift 24s ease-in-out infinite alternate}
@@ -106,7 +105,6 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15);box-shadow:
 #fsl,#nl{display:inline-block;min-width:3.2ch;font-weight:700;color:var(--ac)}
 .bump{animation:bump .3s ease}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
-/* раскрывающиеся блоки вариантов / объяснения */
 details.acc{margin-top:8px;border:1px solid var(--bd);border-radius:12px;background:var(--sf);overflow:hidden}
 details.acc[open]{background:var(--ac2)}
 details.acc>summary{cursor:pointer;list-style:none;padding:10px 12px;font:inherit;font-weight:600;color:var(--ac);display:flex;justify-content:space-between;align-items:center;min-height:2.75rem}
@@ -123,13 +121,11 @@ details.acc>.body ul{margin:0;padding-left:20px}
 <div id="sh" class="sh"><div class="shb" data-close="1"></div><div class="shp" id="shp"></div></div>
 <script>
 'use strict';
-/* ═══ storage: IndexedDB ═══ */
 const DB=new Promise((ok,no)=>{const q=indexedDB.open('qa-helper',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>ok(q.result);q.onerror=no});
 const kvGet=async k=>{const d=await DB;return new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result)})};
 const kvSet=async(k,v)=>{const d=await DB;return new Promise(r=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=r})};
 const kvDel=async k=>{const d=await DB;return new Promise(r=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=r})};
 
-/* ═══ network ═══ */
 const SITE='https://sdo-otvety.info',JSON_URL=SITE+'/assets/questions.json';
 async function fetchText(url){
   const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.CapacitorHttp;
@@ -147,21 +143,27 @@ async function fetchJsonProgress(url,cb){
     return r.text()}
   cb(0,0,0);const t=await fetchText(url);cb(t.length,t.length,0);return t;
 }
-
-/* ═══ norm / validate ═══ */
 const norm=s=>String(s||'').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9]+/g,' ').trim();
-/* расширенный формат: q,a,c,u,v,o; v — массив, o — строка */
+
+/* validate для режима Сайт (простой формат {q,a,c,u}) */
 function validate(arr){
+  if(!Array.isArray(arr))throw Error('Ожидался массив объектов [{q,a,c,u}]');
+  const seen=new Set(),out=[];let bad=0;
+  for(const o of arr){if(!o||typeof o.q!=='string'||typeof o.a!=='string'||!o.q.trim()){bad++;continue}
+    const k=o.q+'\u0001'+o.a;if(seen.has(k))continue;seen.add(k);
+    out.push({q:o.q.trim(),a:o.a.trim(),c:String(o.c||'Без категории'),u:typeof o.u==='string'?o.u:''})}
+  if(!out.length)throw Error('В файле нет корректных записей (нужны поля q и a)');
+  return{out,bad};
+}
+/* validate для режима Сайт 2.0 (расширенный формат {q,a,c,u,v,o}) */
+function validate2(arr){
   if(!Array.isArray(arr))throw Error('Ожидался массив объектов [{q,a,c,u,v,o}]');
   const seen=new Set(),out=[];let bad=0;
   for(const o of arr){
     if(!o||typeof o.q!=='string'||typeof o.a!=='string'||!o.q.trim()){bad++;continue}
     const k=o.q+'\u0001'+o.a;if(seen.has(k))continue;seen.add(k);
     out.push({
-      q:o.q.trim(),
-      a:o.a.trim(),
-      c:String(o.c||'Без категории'),
-      u:typeof o.u==='string'?o.u:'',
+      q:o.q.trim(),a:o.a.trim(),c:String(o.c||'Без категории'),u:typeof o.u==='string'?o.u:'',
       v:Array.isArray(o.v)?o.v.map(x=>String(x)).filter(Boolean):[],
       o:typeof o.o==='string'?o.o:''
     });
@@ -190,7 +192,6 @@ function search(){
   r.sort((a,b)=>b[1]-a[1]);S.res=r.map(x=>x[0]);
 }
 
-/* ═══ state ═══ */
 const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',glass:'D-Glass',sepia:'Сепия',gray:'Серая'};
 const TH={light:['#ffffff,#f3f3f3,#111111,#666666,#111111,#e9e9e9,#dcdcdc,#ffffff,#fff3a6,#c6efbd',0],
 dark:['#0f0f0f,#1b1b1b,#f2f2f2,#9a9a9a,#f2f2f2,#2a2a2a,#2c2c2c,#0f0f0f,#6a5f1c,#25572e',1],
@@ -203,8 +204,15 @@ mono:['Моноширинный','"Roboto Mono","Droid Sans Mono","Courier New",
 light:['Тонкий','sans-serif-light,"Roboto Light",sans-serif'],
 casual:['Рукописный','casual,"Coming Soon",cursive'],
 archivo:['Archivo Black','"Archivo Black",system-ui,sans-serif']};
-const S={tab:'s',mode:'site',remote:'',retry:'inst',
-  items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],
+
+/* Режимы: site — старый «Сайт» (простой формат), site2 — новый «Сайт 2.0» (расширенный) */
+const MODES={site:'Сайт',site2:'Сайт 2.0'};
+const isS2=()=>S.mode==='site2';
+/* ключи хранилища. Для site — db/meta (совместимо с прошлой версией). Для site2 — db_s2/meta_s2. */
+const dbK=()=>isS2()?'db_s2':'db';
+const metaK=()=>isS2()?'meta_s2':'meta2';
+
+const S={tab:'s',mode:'site',remote:'',retry:'inst',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],
   pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10,showV:true,showO:true},
   meta:{},st:null,pend:null,open:{}};
 const $=s=>document.querySelector(s);
@@ -215,94 +223,64 @@ const RW=/[A-Za-zА-Яа-яЁё0-9]+/g;
 const I={t:'<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>',s:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
  g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'};
 
-/* ═══ data ═══ */
-const MODES={site:'Сайт 2.0',own:'Своя БД'};
-const dbK=()=>S.mode==='site'?'db_s2':'db_own';
-const metaK=()=>S.mode==='site'?'meta_s2':'meta_own';
 async function loadActive(){S.items=(await kvGet(dbK()))||[];S.q='';S.cat='';S.lim=S.pref.n;build(S.items);search()}
-/* дата актуальности */
+
 async function remoteDate(){
   const html=await fetchText(SITE+'/'),mt=/Материал обновл[её]н\s+(\d{2}\.\d{2}\.\d{4})/.exec(html);
   if(!mt)throw Error('Не удалось найти дату на странице');return mt[1];
 }
 const dnum=d=>{const [a,b,c]=d.split('.');return +c*10000+ +b*100+ +a};
+
 async function checkRemote(silent){
   if(!silent){S.st={t:'msg',m:'Проверяю сайт…'};S.retry='chk';render()}
-  try{
-    const d=await remoteDate();S.remote=d;
-    if(!silent)S.st=null;
-  }catch(e){if(!silent)S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
+  try{const d=await remoteDate();S.remote=d;if(!silent)S.st=null}
+  catch(e){if(!silent)S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   silent?refreshHead():render();
 }
-/* Парсер карточки вопроса — как в скрипте */
+
+/* парсер карточки для Сайт 2.0 */
 function parseCardHtml(html,anchor){
   try{
     const doc=new DOMParser().parseFromString(html,'text/html');
-    let card=doc.querySelector('article#'+CSS.escape('q-'+anchor.replace(/^q-/,'')));
-    if(!card){
-      const anyId=doc.getElementById('q-'+anchor.replace(/^q-/,''));
-      if(anyId)card=anyId.closest('article');
-    }
+    let card=null;
+    try{card=doc.querySelector('article#'+CSS.escape('q-'+anchor.replace(/^q-/,'')))}catch(e){}
+    if(!card){const anyId=doc.getElementById('q-'+anchor.replace(/^q-/,''));if(anyId)card=anyId.closest('article')}
     if(!card)return null;
     const q_el=card.querySelector('.qa__q')||card.querySelector('h1,h2,h3,h4');
     const question=q_el?q_el.textContent.trim():'';
     const clist=[];const qaA=card.querySelector('.qa__a');
     if(qaA){
       const b=qaA.querySelector('b');
-      const label=b?b.textContent.trim().toLowerCase():'';
-      if(b){
-        let n=b.nextElementSibling;
-        while(n){if(n.tagName==='P'){const t=n.textContent.trim();if(t)clist.push(t)}
-          if(n.parentElement&&n.parentElement.classList&&n.parentElement.classList.contains('qa__a')){}
-          n=n.nextElementSibling;}
-      }
+      if(b){let n=b.nextElementSibling;while(n){if(n.tagName==='P'){const t=n.textContent.trim();if(t)clist.push(t)}n=n.nextElementSibling}}
       if(!clist.length){const p=qaA.querySelector('p');if(p)clist.push(p.textContent.trim())}
     }
     const options=[],seen=new Set();
     ['ul.qa__wrong','ul.qa__list'].forEach(sel=>{
       const ul=card.querySelector(sel);if(!ul)return;
-      ul.querySelectorAll(':scope > li').forEach(li=>{
-        const t=li.textContent.trim();if(t&&!seen.has(t.toLowerCase())){seen.add(t.toLowerCase());options.push(t)}});
+      ul.querySelectorAll(':scope > li').forEach(li=>{const t=li.textContent.trim();if(t&&!seen.has(t.toLowerCase())){seen.add(t.toLowerCase());options.push(t)}});
     });
     let explain='';
     const why=card.querySelector('details.qa__why');
     if(why){
-      const container=why.querySelector('div');
-      const parts=[];
-      if(container){
-        container.querySelectorAll('p').forEach(p=>{
-          if(p.querySelector('.chip'))return;
-          const t=p.textContent.trim();if(t)parts.push(t)});
-      } else {
-        const sm=why.querySelector('summary');
-        let full=why.textContent.trim();
-        if(sm)full=full.replace(sm.textContent.trim(),'').trim();
-        if(full)parts.push(full);
-      }
+      const container=why.querySelector('div'),parts=[];
+      if(container){container.querySelectorAll('p').forEach(p=>{if(p.querySelector('.chip'))return;const t=p.textContent.trim();if(t)parts.push(t)})}
+      else{const sm=why.querySelector('summary');let full=why.textContent.trim();if(sm)full=full.replace(sm.textContent.trim(),'').trim();if(full)parts.push(full)}
       explain=parts.join(' ').replace(/\s+/g,' ').trim();
       const chip=why.querySelector('.chip');
-      if(chip){const src=chip.textContent.trim();
-        if(src){if(!/[.!?]$/.test(explain))explain+='.';explain+=' '+src}}
+      if(chip){const src=chip.textContent.trim();if(src){if(!/[.!?]$/.test(explain))explain+='.';explain+=' '+src}}
     }
     return {q:question,a:clist[0]||'',v:options,o:explain};
   }catch(e){return null}
 }
 async function fetchCard(u){
   if(!u)return null;
-  const parts=u.split('#');
-  const pagePath=parts[0],anchor=parts[1]||'';
-  const pageUrl=SITE+pagePath;
-  try{
-    const html=await fetchText(pageUrl);
-    return parseCardHtml(html,anchor);
-  }catch(e){return null}
+  const parts=u.split('#'),pagePath=parts[0],anchor=parts[1]||'';
+  try{const html=await fetchText(SITE+pagePath);return parseCardHtml(html,anchor)}catch(e){return null}
 }
-/* Установка актуальной БД в режиме «Сайт 2.0»:
-   - качаем questions.json (сайтовый формат q,a,c,u без v/o),
-   - сравниваем по q с текущей локальной БД,
-   - для новых записей с u — тянем v,o,
-   - без u — оставляем v=[], o=''. */
-async function installRemote(){
+
+/* Установка/обновление базы в режиме «Сайт 2.0»: качаем questions.json, сравниваем по q,
+   новые записи с u — тянем v,o; без u — v=[], o=''. */
+async function installRemote2(){
   S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
   try{
     const d=await remoteDate();S.remote=d;S.st={t:'prog',p:0,m:'Загрузка базы…'};render();
@@ -311,58 +289,65 @@ async function installRemote(){
     let arr;try{arr=JSON.parse(text)}catch(e){throw Error('Файл повреждён: это не корректный JSON')}
     const {out:remote}=validate(arr);
 
-    // индекс текущей базы по q
     const cur=S.items.slice();
     const have=new Set(cur.map(it=>it.q));
     const newOnes=remote.filter(it=>!have.has(it.q));
 
     S.st={t:'prog',p:0,m:'Новых: '+newOnes.length+'. Загружаю детали…'};render();
-    // для каждой новой записи: если u есть — тянем карточку, получаем v,o,a
     const enriched=[];
     let i=0;
     for(const it of newOnes){
       i++;
       if(i%10===0){S.st={t:'prog',p:i/newOnes.length*100,m:'Обработка '+i+'/'+newOnes.length};upBar()}
       let row={q:it.q,a:it.a,c:it.c,u:it.u||'',v:[],o:''};
-      if(it.u){
-        const card=await fetchCard(it.u);
-        if(card){
-          row={q:it.q,a:card.a||it.a,c:it.c,u:it.u,v:card.v,o:card.o};
-        }
-      }
+      if(it.u){const card=await fetchCard(it.u);if(card)row={q:it.q,a:card.a||it.a,c:it.c,u:it.u,v:card.v,o:card.o}}
       enriched.push(row);
     }
-
-    // объединяем: старые + новые (при совпадении q оставляем свежее)
-    const merged=[];
-    const seen=new Set();
+    const merged=[],seen=new Set();
     for(const it of enriched){merged.push(it);seen.add(it.q)}
     for(const it of cur){if(!seen.has(it.q)){merged.push(it);seen.add(it.q)}}
 
     await kvSet(dbK(),merged);
+    /* база пришла с сайта — тип 'site' */
     S.meta={type:'site',date:d,count:merged.length};await kvSet(metaK(),S.meta);
     await loadActive();
     S.st={t:'msg',m:'Обновлено: +'+enriched.length+', всего '+merged.length+'. Материал от '+d};vib();
   }catch(e){S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   render();
 }
+/* Установка актуальной БД в режиме «Сайт» — как было в прошлой версии: качаем questions.json,
+   сохраняем как есть. Тип 'site'. */
+async function installRemote(){
+  S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
+  try{
+    const d=await remoteDate();S.remote=d;S.st={t:'prog',p:0,m:'Загрузка базы…'};render();
+    const text=await fetchJsonProgress(JSON_URL,(n,tot,sp)=>{S.st={t:'prog',p:tot?n/tot*100:0,m:'Загрузка: '+(n/1048576).toFixed(1)+(tot?' / '+(tot/1048576).toFixed(1):'')+' МБ'+(sp?', '+(sp/1048576).toFixed(2)+' МБ/с':'')};upBar()});
+    S.st={t:'msg',m:'Обработка и индексация…'};render();await new Promise(r=>setTimeout(r,30));
+    let arr;try{arr=JSON.parse(text)}catch(e){throw Error('Файл повреждён: это не корректный JSON')}
+    const {out}=validate(arr);await kvSet(dbK(),out);
+    S.meta={type:'site',date:d,count:out.length};await kvSet(metaK(),S.meta);await loadActive();
+    S.st={t:'msg',m:'Установлено: '+out.length+' вопросов, материал от '+d};vib();
+  }catch(e){S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
+  render();
+}
 function upBar(){const b=$('#bar');if(b)b.style.width=S.st.p+'%';const l=$('#bl');if(l)l.textContent=S.st.m+(S.st.p?' ('+Math.round(S.st.p)+'%)':'')}
-/* Скачать БД в Downloads */
+
 async function dl(){
   if(!S.items.length)return toast('База пуста');
   const name='questions_'+(S.meta.date||'без_даты')+'.json';
-  const data=JSON.stringify(S.items.map(({q,a,c,u,v,o})=>({q,a,c,u,v,o})));
+  const data=JSON.stringify(S.items.map(({q,a,c,u,v,o})=>({q,a,c,u,...(isS2()?{v:v||[],o:o||''}:{})})));
   const P=window.Capacitor&&Capacitor.Plugins,FS=P&&P.Filesystem,native=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform();
-  if(native&&!FS)return toast('В сборке нет плагина Filesystem — добавьте его в apk.yml');
+  if(native&&!FS)return toast('В сборке нет плагина Filesystem — добавьте его в apk.yml (см. инструкцию)');
   if(FS){
     try{await FS.requestPermissions()}catch(e){}
     for(const[dir,path,label]of[['EXTERNAL_STORAGE','Download/'+name,'Download'],['DOCUMENTS',name,'Documents']]){
       try{await FS.writeFile({path,data,directory:dir,encoding:'utf8',recursive:true});vib();return toast('Сохранено в папку '+label+': '+name)}catch(e){console.warn(e)}}
     if(P.Share){try{const r=await FS.writeFile({path:name,data,directory:'CACHE',encoding:'utf8'});await P.Share.share({title:name,url:r.uri,dialogTitle:'Сохранить базу'});return}catch(e){console.warn(e)}}
-    return toast('Не удалось сохранить: разрешите доступ к файлам в настройках телефона');
+    return toast('Не удалось сохранить: разрешите приложению доступ к файлам в настройках телефона');
   }
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;a.click();
 }
+
 /* ═══ ui ═══ */
 const qToks=()=>norm(S.q).split(' ').filter(Boolean);
 function hlText(text,uq){
@@ -394,14 +379,17 @@ function ans(a){
 }
 function cardHtml(id,um){
   const it=S.items[id],u=um&&um.get(id);
+  const base=`<div class="card rc"><span class="bd">${esc(it.c)}</span>
+  <div class="lb">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div>`;
+  if(!isS2())return base+'</div>';
+  /* Сайт 2.0: добавляем раскрывающиеся блоки */
   const key=String(id);
   const openV=!!S.open[key+'|v'],openO=!!S.open[key+'|o'];
   const vBlock=(S.pref.showV&&it.v&&it.v.length)?
     `<details class="acc" data-acc="${key}|v" ${openV?'open':''}><summary>Варианты ответов</summary><div class="body"><ul>${it.v.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div></details>`:'';
   const oBlock=(S.pref.showO&&it.o)?
     `<details class="acc" data-acc="${key}|o" ${openO?'open':''}><summary>Объяснение</summary><div class="body">${esc(it.o)}</div></details>`:'';
-  return `<div class="card rc"><span class="bd">${esc(it.c)}</span>
-  <div class="lb">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div>${vBlock}${oBlock}</div>`;
+  return base+vBlock+oBlock+'</div>';
 }
 function stat(){const st=S.st;if(!st)return '';
   return st.t==='prog'?`<div class="bar"><i id="bar" style="width:${st.p}%"></i></div><div id="bl" class="mu">${st.m}</div>`:
@@ -429,7 +417,7 @@ function resHtml(){
 }
 function viewSearch(){
   if(S.loading)return '<div class="sk"></div><div class="sk"></div>';
-  if(!S.items.length)return head()+stat()+`<div class="card" style="text-align:center"><b>Базы нет</b><div class="mu" style="margin:6px 0 12px">Установите актуальную базу с сайта или выгрузите свой JSON-файл в настройках.</div><div class="row" style="justify-content:center"><button class="btn" data-act="inst">Установить актуальную БД</button><button class="btn s" data-tab="g">Настройки</button></div></div>`;
+  if(!S.items.length)return head()+stat()+`<div class="card" style="text-align:center"><b>Базы нет</b><div class="mu" style="margin:6px 0 12px">Установите актуальную базу с сайта (интернет нужен один раз) или выгрузите свой JSON-файл в настройках.</div><div class="row" style="justify-content:center"><button class="btn" data-act="inst">Установить актуальную БД</button><button class="btn s" data-tab="g">Настройки</button></div></div>`;
   return head()+(S.st&&S.st.t==='prog'?stat():'')+`<div class="mu" style="margin:2px 6px 6px">История поиска:</div><div class="card hist" id="hist">${histHtml()}</div>
   <input type="search" id="q" placeholder="Введите слова для поиска ответа:" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
   <div id="res" style="margin-top:12px">${resHtml()}</div>`;
@@ -438,23 +426,24 @@ function viewSet(){
   const chk=(id,on)=>`<input type="checkbox" id="${id}" ${on?'checked':''} style="width:1.5rem;height:1.5rem;flex:none">`;
   const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала (ДД.ММ.ГГГГ):</div>
    <input type="text" id="pd" class="in" inputmode="numeric" placeholder="01.01.2000" maxlength="10"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
+  /* тумблеры показа v/o — только для Сайт 2.0, ниже «Раздел поиска» */
+  const s2Extras=isS2()?`
+    <label class="r">Показывать варианты ответов${chk('sv',S.pref.showV)}</label>
+    <label class="r">Показывать объяснение${chk('so',S.pref.showO)}</label>`:'';
   return `<div class="card"><b>Режим работы</b><div class="g" style="margin-top:10px">${Object.entries(MODES).map(([k,n])=>`<button class="chip ${S.mode===k?'on':''}" data-mode="${k}">${n}</button>`).join('')}</div></div>
   <div class="card">
   <div class="row" style="justify-content:space-between"><b>База данных</b><button class="ib" data-act="clr" aria-label="Очистить базу">${I.t}</button></div>
   <div style="margin-top:8px">${infoRows()}</div>${stat()}
   <div class="g" style="margin-top:10px"><button class="btn s" data-act="chk">Проверить актуальность</button><button class="btn s" data-act="inst">Установить актуальную БД</button><button class="btn s" data-act="load">Выгрузить БД</button><button class="btn s" data-act="exp">Скачать БД</button></div>${p}
   <div class="div"></div>
-  ${row("cat","Раздел поиска",S.cat||"Все")}
-  <label class="r">Автопроверка актуальности материала${chk('au',S.pref.auto)}</label></div>
+  ${row("cat","Раздел поиска",S.cat||"Все")}${s2Extras}</div>
   <div class="card"><b>Системные</b>
   ${row("theme","Тема",THEMES[S.pref.theme])}
   ${row("font","Шрифт",FONTS[S.pref.font][0])}
   <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
   <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
   <div class="div"></div>
-  <label class="r">Автопроверка актуальности материала${chk('au2',S.pref.auto)}</label>
-  <label class="r">Показывать варианты ответов${chk('sv',S.pref.showV)}</label>
-  <label class="r">Показывать объяснение${chk('so',S.pref.showO)}</label>
+  <label class="r">Автопроверка актуальности материала${chk('au',S.pref.auto)}</label>
   <div class="div"></div>
   <label class="r"><span class="tx"><b>Подсветка желтым</b><span class="sub">Слова, совпавшие с введёнными в поиск, подсвечены жёлтым</span></span>${chk('hm',S.pref.hm)}</label>
   <label class="r"><span class="tx"><b>Подсветка зеленым</b><span class="sub">Уникальные для вопроса слова подсвечены зелёным</span></span>${chk('hu',S.pref.hu)}</label>
@@ -499,13 +488,12 @@ document.addEventListener('input',e=>{
   if(id==='pd'){const d=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=d.slice(0,2)+(d.length>2?'.':'')+d.slice(2,4)+(d.length>4?'.':'')+d.slice(4)}
   if(id==='q'){S.q=e.target.value;S.lim=S.pref.n;clearTimeout(dt);dt=setTimeout(()=>{search();$('#res').innerHTML=resHtml();
     clearTimeout(S.ht);S.ht=setTimeout(()=>{const n=norm(S.q);if(n.length>2&&S.res.length){S.hist=[n,...S.hist.filter(x=>x!==n)].slice(0,15);kvSet('hist',S.hist);const h=$('#hist');if(h)h.innerHTML=histHtml()}},1500)},30)}
-  if(id==='ct'){S.cat=e.target.value;S.lim=S.pref.n;search();toast('Раздел: '+(S.cat||'Все'))}
   if(id==='fs'){S.pref.fs=+e.target.value;$('#fsl').textContent=S.pref.fs+' px';bump($('#fsl'));applyPref();savePref()}
   if(id==='nn'){S.pref.n=+e.target.value;S.lim=S.pref.n;$('#nl').textContent=S.pref.n;bump($('#nl'));savePref()}
   if(id==='hm'||id==='hu'){S.pref[id]=e.target.checked;savePref();if(S.q)search()}
   if(id==='sv'){S.pref.showV=e.target.checked;savePref();render()}
   if(id==='so'){S.pref.showO=e.target.checked;savePref();render()}
-  if(id==='au'||id==='au2'){S.pref.auto=e.target.checked;savePref()}
+  if(id==='au'){S.pref.auto=e.target.checked;savePref()}
 });
 document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-act],[data-tab],[data-h],[data-mode],[data-pv],[data-close],[data-acc]');if(!b)return;
@@ -514,14 +502,7 @@ document.addEventListener('click',async e=>{
   if(d.h){S.q=d.h;render();search();$('#res').innerHTML=resHtml();return}
   if(d.mode){S.mode=d.mode;S.st=null;S.pend=null;await kvSet('mode2',S.mode);S.meta=(await kvGet(metaK()))||{};await loadActive();vib();return render()}
   if(d.close){closeSheet();return}
-  if(d.acc){
-    // сворачивание details меняется нативным toggle — просто запомним состояние
-    const k=d.acc;
-    const el=b;
-    // toggle сработал уже — считаем новое состояние через el.open
-    S.open[k]=el.open;
-    return;
-  }
+  if(d.acc){S.open[d.acc]=b.open;return}
   if(d.pv){const i=d.pv.indexOf('|'),k=d.pv.slice(0,i),v=d.pv.slice(i+1);
     if(k==='theme'){S.pref.theme=v;applyPref();savePref()}
     if(k==='font'){S.pref.font=v;applyPref();savePref()}
@@ -531,7 +512,7 @@ document.addEventListener('click',async e=>{
     case'chk':checkRemote();break;
     case'inst':
       if(S.meta.type==='own'&&S.items.length){sheet(`<h3>Заменить свою базу?</h3><p class="mu">Ваша база (${S.items.length} вопросов) будет заменена актуальной с сайта. Скачайте её заранее, если она нужна.</p><div class="row"><button class="btn s" data-close="1" style="flex:1">Отмена</button><button class="btn" data-act="instok" style="flex:1">Заменить</button></div>`);break}
-    case'instok':closeSheet();installRemote();break;
+    case'instok':closeSheet();(isS2()?installRemote2():installRemote());break;
     case'more':S.lim+=S.pref.n;$('#res').innerHTML=resHtml();break;
     case'exp':dl();break;
     case'load':$('#file').click();break;
@@ -551,14 +532,12 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('toggle',e=>{
   const el=e.target;
-  if(el.matches&&el.matches('details.acc[data-acc]')){
-    S.open[el.dataset.acc]=el.open;
-  }
+  if(el.matches&&el.matches('details.acc[data-acc]'))S.open[el.dataset.acc]=el.open;
 },true);
 $('#file').addEventListener('change',async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
   try{let arr;try{arr=JSON.parse(await f.text())}catch{throw Error('Файл повреждён: это не корректный JSON')}
-    S.pend=validate(arr);render()}
+    S.pend=isS2()?validate2(arr):validate(arr);render()}
   catch(err){toast('Ошибка: '+err.message)}
 });
 window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){closeSheet();return}if(S.tab!=='s')go('s',false)});
@@ -569,10 +548,15 @@ window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){cl
   try{
     S.mode=(await kvGet('mode2'))||'site';if(!MODES[S.mode])S.mode='site';
     S.meta=(await kvGet(metaK()))||{};
+    /* перенос из старой версии: если есть db/meta (режим 'site'), а db_s2 нет — не трогаем */
+    if(S.mode==='site'&&!(await kvGet('db'))){
+      const m0=await kvGet('mode')==='own'?'own':'site';
+      for(const t of [m0,m0==='own'?'site':'own']){const d=await kvGet('db_'+t);
+        if(d&&d.length){await kvSet('db',d);S.meta={type:t,date:((await kvGet('meta'))||{})[t]?.date||'',count:d.length};await kvSet('meta2',S.meta);break}}
+    }
     S.hist=(await kvGet('hist'))||[];Object.assign(S.pref,await kvGet('pref')||{});
-    if(!S.pref.showV&&S.pref.showV!==false)S.pref.showV=true;
-    if(!S.pref.showO&&S.pref.showO!==false)S.pref.showO=true;
     if(S.pref.theme==='blue')S.pref.theme='glass';if(!THEMES[S.pref.theme])S.pref.theme='auto';if(!FONTS[S.pref.font])S.pref.font='sys';
+    if(S.pref.showV===undefined)S.pref.showV=true;if(S.pref.showO===undefined)S.pref.showO=true;
     applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;await loadActive();
   }catch(e){toast('Ошибка хранилища: '+e.message)}
   S.loading=false;render();
