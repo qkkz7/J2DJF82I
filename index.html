@@ -75,6 +75,28 @@ nav button.on svg{animation:pop .3s}
 .tp{background:var(--ac2);color:var(--ac)}
 .tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
 label.r{gap:8px;padding:4px 0}
+/* ═══ D-Glass: тёмное «жидкое стекло» (графит #141517 / #18191B / #1E1F22, акцент #3574F0, коралл #FF6B68) ═══ */
+@keyframes drift{from{background-position:0 0,100% 100%}to{background-position:10% 6%,90% 94%}}
+[data-th=glass] body{background-image:radial-gradient(60% 36% at 12% 6%,#3574F030,transparent 70%),radial-gradient(55% 34% at 95% 100%,#FF6B6822,transparent 70%);background-size:150% 150%;background-repeat:no-repeat;animation:drift 24s ease-in-out infinite alternate}
+[data-th=glass] svg{stroke-width:1.6}
+[data-th=glass] .card{background:var(--sf);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border:1px solid var(--bd);border-radius:26px;box-shadow:inset 0 1px 0 #ffffff2e,0 10px 30px #0008}
+[data-th=glass] nav{margin:0 12px calc(8px + env(safe-area-inset-bottom));padding-bottom:0;border-radius:30px;background:#1E1F22b8;border:1px solid #ffffff22;-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);box-shadow:inset 0 1px 0 #ffffff33,0 8px 28px #000a}
+[data-th=glass] nav button.on svg{filter:drop-shadow(0 0 6px #3574F0)}
+[data-th=glass] .btn{background:linear-gradient(180deg,#5b92f5,#3574F0);color:#fff;box-shadow:inset 0 1px 0 #ffffff55,0 4px 16px #3574F066}
+[data-th=glass] .btn.s,[data-th=glass] .ib{background:#ffffff14;color:var(--tx);border:1px solid var(--bd);box-shadow:inset 0 1px 0 #ffffff26;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+[data-th=glass] .ib.on{background:linear-gradient(180deg,#5b92f5,#3574F0);color:#fff}
+[data-th=glass] [data-act=clr]{color:#FF6B68}
+[data-th=glass] .chip{background:#ffffff10;border:1px solid var(--bd);color:var(--tx)}
+[data-th=glass] .chip.on{background:linear-gradient(180deg,#5b92f5,#3574F0);color:#fff;border-color:transparent}
+[data-th=glass] input[type=search],[data-th=glass] .in{background:#ffffff10;border:1px solid var(--bd);box-shadow:inset 0 1px 0 #ffffff1f;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:var(--tx)}
+[data-th=glass] input[type=search]:focus,[data-th=glass] .in:focus{outline:0;border-color:#3574F0;box-shadow:0 0 0 3px #3574F044}
+[data-th=glass] .a{background:#3574F01f;border:1px solid #3574F044;color:#cfe0ff}
+[data-th=glass] .pick b,[data-th=glass] .bd,[data-th=glass] .tp{color:#7aa5f8}
+[data-th=glass] .old{background:#FF6B6833;color:#FF6B68}.er{color:#FF6B68}
+[data-th=glass] .okc{color:#7be59a}
+[data-th=glass] .shp{background:#1E1F22ec;-webkit-backdrop-filter:blur(40px) saturate(180%);backdrop-filter:blur(40px) saturate(180%);border-top:1px solid #ffffff2a}
+[data-th=glass] #toast{background:#2a2c30dd;border:1px solid #ffffff2a;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+[data-th=glass] .bar i{background:linear-gradient(90deg,#3574F0,#5b92f5)}
 </style></head><body>
 <main id="m"></main>
 <div id="toast"></div>
@@ -140,14 +162,20 @@ function search(){
 }
 
 /* ═══ state ═══ */
-const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',blue:'Голубая',sepia:'Сепия',gray:'Серая'};
+const THEMES={auto:'Системная',light:'Светлая',dark:'Тёмная',glass:'D-Glass',sepia:'Сепия',gray:'Серая'};
 /* палитры: bg,sf,tx,mu,ac,ac2,bd,on,m1(совпадение),m2(уникальное); последний флаг — тёмная */
 const TH={light:['#f6f4fb,#ffffff,#1d1b20,#6b6775,#5b3fd1,#e9e2ff,#e3dff0,#ffffff,#fff3a6,#c6efbd',0],
 dark:['#141218,#1f1b26,#ece6f2,#a9a3b5,#b9a6ff,#352c58,#332e3d,#1d1b20,#6a5f1c,#25572e',1],
-blue:['#eaf2fb,#ffffff,#12263f,#566b85,#1565c0,#d9e8fa,#c9dbf0,#ffffff,#fff1a0,#bfeac4',0],
+glass:['#141517,#ffffff12,#f2f3f5,#a9acb3,#3574F0,#3574F033,#ffffff1f,#ffffff,#ffd60a55,#30d15855',1],
 sepia:['#f4ecd8,#fbf5e6,#3b2f1e,#7a6a52,#9a5b1f,#efe0c2,#e0d2b4,#ffffff,#f6e08a,#cfe4a8',0],
 gray:['#dcdee1,#eceef0,#1c1e21,#555a60,#3d4b5c,#cdd2d8,#bcc2c9,#ffffff,#f3e58f,#bfe0b8',0]};
-const FONTS={sys:['Системный','system-ui,sans-serif'],serif:['С засечками','Georgia,"Times New Roman",serif'],mono:['Моноширинный','ui-monospace,Menlo,Consolas,monospace'],round:['Округлый','"Trebuchet MS","Segoe UI",sans-serif']};
+const FONTS={sys:['Системный','system-ui,sans-serif'],
+serif:['С засечками','"Noto Serif","Droid Serif",Georgia,serif'],
+mono:['Моноширинный','"Roboto Mono","Droid Sans Mono","Courier New",monospace'],
+light:['Тонкий','sans-serif-light,"Roboto Light",sans-serif'],
+cond:['Узкий','sans-serif-condensed,"Roboto Condensed",sans-serif'],
+casual:['Рукописный','casual,"Coming Soon",cursive'],
+sf:['SF (как на iPhone)','-apple-system,"SF Pro Text","Helvetica Neue","Google Sans","Product Sans",Roboto,sans-serif']};
 const S={tab:'s',mode:'site',remote:'',retry:'inst',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10},meta:{},st:null,pend:null};
 const $=s=>document.querySelector(s);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -172,7 +200,7 @@ async function checkRemote(silent){
   if(!silent){S.st={t:'msg',m:'Проверяю сайт…'};S.retry='chk';render()}
   try{
     const d=await remoteDate();S.remote=d;const cur=S.meta.date;
-    if(!silent)S.st={t:'msg',m:'Дата материала на сайте: '+d+(!S.items.length||!cur?'':dnum(cur)>=dnum(d)?'. У вас актуальная база':'. Ваш материал устарел')};
+    if(!silent)S.st=null;
   }catch(e){if(!silent)S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   silent?refreshHead():render();
 }
@@ -248,7 +276,13 @@ function badge(){
   return dnum(S.meta.date)>=dnum(S.remote)?'<span class="tg2 okc">Актуальна</span>':`<span class="tg2 old">Устарел: ${S.remote}</span>`;
 }
 const typeName=()=>S.meta.type==='own'?'Своя':S.meta.type==='site'?'Сайт':'—';
-const infoRows=()=>`<div class="kv"><span>Режим работы:</span><b>${MODES[S.mode]}${S.meta.type?`<span class="tg2 tp">БД ${typeName()}</span>`:''}</b></div><div class="kv"><span>Материал от:</span><b>${S.meta.date||'—'}${badge()}</b></div><div class="kv"><span>Вопросов:</span><b>${S.items.length}</b></div>`;
+function freshRows(){
+  if(!S.items.length)return '';
+  if(!S.meta.date||!S.remote)return `<div class="kv"><span>Актуальность материала:</span><b>${S.meta.date?'не проверена':'дата не указана'}</b></div>`;
+  const ok=dnum(S.meta.date)>=dnum(S.remote);
+  return `<div class="kv"><span>Актуальность материала:</span><b><span class="tg2 ${ok?'okc':'old'}" style="margin:0">${ok?'Актуален':'Неактуален'}</span></b></div>${ok?'':`<div class="kv"><span>Новая дата:</span><b>${S.remote}</b></div>`}`;
+}
+const infoRows=(st)=>`<div class="kv"><span>Режим работы:</span><b>${MODES[S.mode]}${S.meta.type?`<span class="tg2 tp">БД ${typeName()}</span>`:''}</b></div><div class="kv"><span>Материал от:</span><b>${S.meta.date||'—'}</b></div>${freshRows()}<div class="kv"><span>Вопросов:</span><b>${S.items.length}</b></div>`;
 const head=()=>`<div class="card" id="hd" style="padding:12px 14px">${infoRows()}<div class="kv"><span>Раздел:</span><b>${esc(S.cat||'Все')}</b></div></div>`;
 const refreshHead=()=>{const e=$('#hd');if(e)e.outerHTML=head()};
 const histHtml=()=>S.hist.length?S.hist.map(h=>`<button class="chip" data-h="${esc(h)}">${esc(h)}</button>`).join(''):'<span class="mu">История поиска пуста</span>';
@@ -261,7 +295,7 @@ function resHtml(){
 function viewSearch(){
   if(S.loading)return '<div class="sk"></div><div class="sk"></div>';
   if(!S.items.length)return head()+stat()+`<div class="card" style="text-align:center"><b>Базы нет</b><div class="mu" style="margin:6px 0 12px">Установите актуальную базу с сайта (интернет нужен один раз) или выгрузите свой JSON-файл в настройках.</div><div class="row" style="justify-content:center"><button class="btn" data-act="inst">Установить актуальную БД</button><button class="btn s" data-tab="g">Настройки</button></div></div>`;
-  return head()+stat()+`<div class="card hist" id="hist">${histHtml()}</div>
+  return head()+(S.st&&S.st.t==='prog'?stat():'')+`<div class="mu" style="margin:2px 6px 6px">История поиска:</div><div class="card hist" id="hist">${histHtml()}</div>
   <input type="search" id="q" placeholder="Поиск: например «боков ролик 500»" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
   <div id="res" style="margin-top:12px">${resHtml()}</div>`;
 }
@@ -273,7 +307,7 @@ function viewSet(){
   return `<div class="card"><b>Режим работы</b><div class="g" style="margin-top:10px">${Object.entries(MODES).map(([k,n])=>`<button class="chip ${S.mode===k?'on':''}" data-mode="${k}">${n}</button>`).join('')}</div></div>
   <div class="card">
   <div class="row" style="justify-content:space-between"><b>База данных</b><button class="ib" data-act="clr" aria-label="Очистить базу">${I.t}</button></div>
-  <div style="margin-top:8px">${infoRows()}</div>${stat()}
+  <div style="margin-top:8px">${infoRows(1)}</div>${stat()}
   <div class="g" style="margin-top:10px"><button class="btn s" data-act="chk">Проверить актуальность</button><button class="btn s" data-act="inst">Установить актуальную БД</button><button class="btn s" data-act="load">Выгрузить БД</button><button class="btn s" data-act="exp">Скачать БД</button></div>${p}
   <div class="div"></div>
   ${row("cat","Раздел",S.cat||"Все")}
@@ -299,7 +333,7 @@ function applyPref(){
   if(!TH[id])id='light';
   const v=TH[id][0].split(',');
   ['bg','sf','tx','mu','ac','ac2','bd','on','m1','m2'].forEach((k,i)=>r.style.setProperty('--'+k,v[i]));
-  r.style.colorScheme=TH[id][1]?'dark':'light';
+  r.style.colorScheme=TH[id][1]?'dark':'light';r.dataset.th=id;
   r.style.fontSize=S.pref.fs+'px';r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
 }
 const savePref=()=>kvSet('pref',S.pref);
@@ -308,7 +342,7 @@ function sheet(html){$('#shp').innerHTML=html;$('#sh').classList.add('on')}
 function closeSheet(){$('#sh').classList.remove('on')}
 function openPick(k){
   if(k==='theme')return sheet('<h3>Тема</h3><div class="tg">'+Object.keys(THEMES).map(id=>{
-    const c=(id==='auto'?TH.light:TH[id])[0].split(','),bg=id==='auto'?`linear-gradient(135deg,${c[0]} 50%,${TH.dark[0].split(',')[0]} 50%)`:c[0];
+    const c=(id==='auto'?TH.light:TH[id])[0].split(','),bg=id==='auto'?`linear-gradient(135deg,${c[0]} 50%,${TH.dark[0].split(',')[0]} 50%)`:id==='glass'?'linear-gradient(135deg,#1E1F22,#141517 55%,#3574F0aa)':c[0];
     return `<button class="tile ${S.pref.theme===id?'on':''}" data-pv="theme|${id}"><span class="pv" style="background:${bg};color:${id==='auto'?'#888':c[2]}">Аа<i style="background:${c[4]}"></i></span>${THEMES[id]}</button>`}).join('')+'</div>');
   if(k==='font')return sheet('<h3>Шрифт</h3>'+Object.entries(FONTS).map(([id,[n,f]])=>`<button class="opt ${S.pref.font===id?'on':''}" data-pv="font|${id}" style="font-family:${f}"><span>${n}</span><small>Образец текста: Аа Бб 0123</small></button>`).join(''));
   if(k==='cat'){const cs=Object.entries(S.cats).sort((a,b)=>b[1]-a[1]);
@@ -385,7 +419,7 @@ window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){cl
         if(d&&d.length){await kvSet(dbK(),d);S.meta={type:t,date:(om[t]||(t==='site'?om:{})).date||'',count:d.length};await kvSet(metaK(),S.meta);break}}
     }
     S.hist=(await kvGet('hist'))||[];Object.assign(S.pref,await kvGet('pref')||{});
-    if(!THEMES[S.pref.theme])S.pref.theme='auto';
+    if(S.pref.theme==='blue')S.pref.theme='glass';if(!THEMES[S.pref.theme])S.pref.theme='auto';if(!FONTS[S.pref.font])S.pref.font='sys';
     applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;await loadActive();
   }catch(e){toast('Ошибка хранилища: '+e.message)}
   S.loading=false;render();
