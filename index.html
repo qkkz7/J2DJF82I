@@ -30,6 +30,8 @@ input[type=search]:focus{outline:0;border-color:var(--ac)}
 .chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .q{font-weight:600}.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap}
 .a ul{margin:0;padding-left:20px}.lb{font-size:0.75rem;color:var(--mu);margin-top:8px}
+/* «Вопрос» / «Ответ» — теперь как сам вопрос */
+.lb.big{font-size:1rem;font-weight:600;color:var(--tx)}
 .bd{display:inline-block;font-size:0.75rem;background:var(--ac2);color:var(--ac);border-radius:10px;padding:2px 10px;margin-bottom:6px}
 .mu{color:var(--mu);font-size:0.875rem}.er{color:var(--er)}
 .bar{height:0.625rem;border-radius:5px;background:var(--ac2);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:.2s}
@@ -74,6 +76,8 @@ nav button.on svg{animation:pop .3s}
 .okc{background:var(--m2);color:var(--tx)}.old{background:#f5c6c2;color:#601410}
 .g .btn{padding:6px 10px;font-size:0.875rem;line-height:1.2}
 .tp{background:var(--ac2);color:var(--ac)}
+/* Плашка «Содержит несколько верных ответов» — цвет из темы */
+.multi{background:var(--ac2);color:var(--ac);font-size:0.75rem;padding:2px 10px;border-radius:10px;font-weight:600;margin-left:8px}
 .tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
 /* ═══ D-Glass ═══ */
 @keyframes drift{from{background-position:0 0,100% 100%}to{background-position:10% 6%,90% 94%}}
@@ -97,6 +101,7 @@ nav button.on svg{animation:pop .3s}
 [data-th=glass] .shp{background:#1E1F22ec;-webkit-backdrop-filter:blur(40px) saturate(180%);backdrop-filter:blur(40px) saturate(180%);border-top:1px solid #ffffff2a}
 [data-th=glass] #toast{background:#2a2c30dd;border:1px solid #ffffff2a;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
 [data-th=glass] .bar i{background:linear-gradient(90deg,#3574F0,#5b92f5)}
+[data-th=glass] .multi{background:#3574F01f;color:#7aa5f8;border:1px solid #3574F044}
 input[type=range]{-webkit-appearance:none;appearance:none;height:.55rem;border-radius:1rem;outline:0;cursor:pointer;background:linear-gradient(90deg,var(--ac) var(--p,50%),var(--ac2) var(--p,50%));transition:filter .2s}
 input[type=range]:active{filter:brightness(1.15)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.3rem;height:1.3rem;border-radius:50%;background:var(--ac);border:.16rem solid var(--on);box-shadow:0 2px 8px #0005,0 0 0 0 var(--ac2);transition:transform .18s cubic-bezier(.3,1.6,.5,1),box-shadow .25s}
@@ -112,7 +117,9 @@ details.acc>summary::-webkit-details-marker{display:none}
 details.acc>summary::after{content:'+';font-size:1.25rem;font-weight:700;color:var(--ac);transition:transform .2s}
 details.acc[open]>summary::after{content:'−'}
 details.acc>.body{padding:0 12px 12px;color:var(--tx);font-weight:400;font-size:0.95rem;white-space:pre-wrap}
-details.acc>.body ul{margin:0;padding-left:20px}
+details.acc>.body ul{margin:0;padding-left:0;list-style:none}
+details.acc>.body li{padding:4px 0}
+details.acc>.body li + li{border-top:1px solid var(--bd);margin-top:4px;padding-top:8px}
 </style></head><body>
 <main id="m"></main>
 <div id="toast"></div>
@@ -145,7 +152,6 @@ async function fetchJsonProgress(url,cb){
 }
 const norm=s=>String(s||'').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9]+/g,' ').trim();
 
-/* validate для режима Сайт (простой формат {q,a,c,u}) */
 function validate(arr){
   if(!Array.isArray(arr))throw Error('Ожидался массив объектов [{q,a,c,u}]');
   const seen=new Set(),out=[];let bad=0;
@@ -155,7 +161,6 @@ function validate(arr){
   if(!out.length)throw Error('В файле нет корректных записей (нужны поля q и a)');
   return{out,bad};
 }
-/* validate для режима Сайт 2.0 (расширенный формат {q,a,c,u,v,o}) */
 function validate2(arr){
   if(!Array.isArray(arr))throw Error('Ожидался массив объектов [{q,a,c,u,v,o}]');
   const seen=new Set(),out=[];let bad=0;
@@ -205,10 +210,9 @@ light:['Тонкий','sans-serif-light,"Roboto Light",sans-serif'],
 casual:['Рукописный','casual,"Coming Soon",cursive'],
 archivo:['Archivo Black','"Archivo Black",system-ui,sans-serif']};
 
-/* Режимы: site — старый «Сайт» (простой формат), site2 — новый «Сайт 2.0» (расширенный) */
-const MODES={site:'Сайт',site2:'Сайт 2.0'};
+/* Режимы: site — 1.0 (старый формат), site2 — 2.0 (расширенный) */
+const MODES={site:'1.0',site2:'2.0'};
 const isS2=()=>S.mode==='site2';
-/* ключи хранилища. Для site — db/meta (совместимо с прошлой версией). Для site2 — db_s2/meta_s2. */
 const dbK=()=>isS2()?'db_s2':'db';
 const metaK=()=>isS2()?'meta_s2':'meta2';
 
@@ -224,7 +228,6 @@ const I={t:'<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14
  g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'};
 
 async function loadActive(){S.items=(await kvGet(dbK()))||[];S.q='';S.cat='';S.lim=S.pref.n;build(S.items);search()}
-
 async function remoteDate(){
   const html=await fetchText(SITE+'/'),mt=/Материал обновл[её]н\s+(\d{2}\.\d{2}\.\d{4})/.exec(html);
   if(!mt)throw Error('Не удалось найти дату на странице');return mt[1];
@@ -237,8 +240,6 @@ async function checkRemote(silent){
   catch(e){if(!silent)S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   silent?refreshHead():render();
 }
-
-/* парсер карточки для Сайт 2.0 */
 function parseCardHtml(html,anchor){
   try{
     const doc=new DOMParser().parseFromString(html,'text/html');
@@ -269,7 +270,7 @@ function parseCardHtml(html,anchor){
       const chip=why.querySelector('.chip');
       if(chip){const src=chip.textContent.trim();if(src){if(!/[.!?]$/.test(explain))explain+='.';explain+=' '+src}}
     }
-    return {q:question,a:clist[0]||'',v:options,o:explain};
+    return {q:question,a:clist,/* массив правильных */v:options,o:explain};
   }catch(e){return null}
 }
 async function fetchCard(u){
@@ -278,8 +279,6 @@ async function fetchCard(u){
   try{const html=await fetchText(SITE+pagePath);return parseCardHtml(html,anchor)}catch(e){return null}
 }
 
-/* Установка/обновление базы в режиме «Сайт 2.0»: качаем questions.json, сравниваем по q,
-   новые записи с u — тянем v,o; без u — v=[], o=''. */
 async function installRemote2(){
   S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
   try{
@@ -300,7 +299,12 @@ async function installRemote2(){
       i++;
       if(i%10===0){S.st={t:'prog',p:i/newOnes.length*100,m:'Обработка '+i+'/'+newOnes.length};upBar()}
       let row={q:it.q,a:it.a,c:it.c,u:it.u||'',v:[],o:''};
-      if(it.u){const card=await fetchCard(it.u);if(card)row={q:it.q,a:card.a||it.a,c:it.c,u:it.u,v:card.v,o:card.o}}
+      if(it.u){const card=await fetchCard(it.u);
+        if(card){
+          /* правильных может быть несколько — тогда склеиваем через " \n " */
+          const a=Array.isArray(card.a)&&card.a.length?card.a.join('\n'):it.a;
+          row={q:it.q,a,c:it.c,u:it.u,v:card.v,o:card.o};
+        }}
       enriched.push(row);
     }
     const merged=[],seen=new Set();
@@ -308,15 +312,12 @@ async function installRemote2(){
     for(const it of cur){if(!seen.has(it.q)){merged.push(it);seen.add(it.q)}}
 
     await kvSet(dbK(),merged);
-    /* база пришла с сайта — тип 'site' */
     S.meta={type:'site',date:d,count:merged.length};await kvSet(metaK(),S.meta);
     await loadActive();
     S.st={t:'msg',m:'Обновлено: +'+enriched.length+', всего '+merged.length+'. Материал от '+d};vib();
   }catch(e){S.st={t:'err',m:(navigator.onLine?'Ошибка: ':'Нет сети. ')+e.message}}
   render();
 }
-/* Установка актуальной БД в режиме «Сайт» — как было в прошлой версии: качаем questions.json,
-   сохраняем как есть. Тип 'site'. */
 async function installRemote(){
   S.retry='inst';S.st={t:'prog',p:0,m:'Подключаюсь…'};render();
   try{
@@ -374,15 +375,18 @@ function uniqueMap(ids){
   return res;
 }
 function ans(a){
-  const parts=a.split(/\n|\s\|\s|;\s/).map(x=>x.trim()).filter(Boolean);
-  return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hlText(p)+'</li>').join('')+'</ul>':hlText(a);
+  /* делим по переносам, | и ; — на случай множественных правильных */
+  const parts=String(a||'').split(/\n|\s\|\s|;\s/).map(x=>x.trim()).filter(Boolean);
+  return parts.length>1?'<ul>'+parts.map(p=>'<li>'+hlText(p)+'</li>').join('')+'</ul>':hlText(a||'');
 }
+/* считаем, есть ли у вопроса более одного правильного ответа (хранится как строка с \n) */
+const isMulti=(it)=>typeof it.a==='string'&&/\n/.test(it.a);
 function cardHtml(id,um){
   const it=S.items[id],u=um&&um.get(id);
-  const base=`<div class="card rc"><span class="bd">${esc(it.c)}</span>
-  <div class="lb">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb">Ответ</div><div class="a">${ans(it.a)}</div>`;
+  const multi=isS2()&&isMulti(it)?'<span class="multi">Содержит несколько верных ответов</span>':'';
+  const base=`<div class="card rc"><span class="bd">${esc(it.c)}</span>${multi}
+  <div class="lb big">Вопрос</div><div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb big">Ответ</div><div class="a">${ans(it.a)}</div>`;
   if(!isS2())return base+'</div>';
-  /* Сайт 2.0: добавляем раскрывающиеся блоки */
   const key=String(id);
   const openV=!!S.open[key+'|v'],openO=!!S.open[key+'|o'];
   const vBlock=(S.pref.showV&&it.v&&it.v.length)?
@@ -426,7 +430,6 @@ function viewSet(){
   const chk=(id,on)=>`<input type="checkbox" id="${id}" ${on?'checked':''} style="width:1.5rem;height:1.5rem;flex:none">`;
   const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала (ДД.ММ.ГГГГ):</div>
    <input type="text" id="pd" class="in" inputmode="numeric" placeholder="01.01.2000" maxlength="10"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
-  /* тумблеры показа v/o — только для Сайт 2.0, ниже «Раздел поиска» */
   const s2Extras=isS2()?`
     <label class="r">Показывать варианты ответов${chk('sv',S.pref.showV)}</label>
     <label class="r">Показывать объяснение${chk('so',S.pref.showO)}</label>`:'';
@@ -548,7 +551,6 @@ window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){cl
   try{
     S.mode=(await kvGet('mode2'))||'site';if(!MODES[S.mode])S.mode='site';
     S.meta=(await kvGet(metaK()))||{};
-    /* перенос из старой версии: если есть db/meta (режим 'site'), а db_s2 нет — не трогаем */
     if(S.mode==='site'&&!(await kvGet('db'))){
       const m0=await kvGet('mode')==='own'?'own':'site';
       for(const t of [m0,m0==='own'?'site':'own']){const d=await kvGet('db_'+t);
