@@ -9,10 +9,14 @@ jobs:
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
-      - run: npm init -y && npm i @capacitor/core @capacitor/cli @capacitor/android
+      - run: npm init -y && npm i @capacitor/core @capacitor/cli @capacitor/android @capacitor/filesystem @capacitor/share
       - run: npx cap init "Helper" com.helper.qa --web-dir=www
       - run: node -e "const f='capacitor.config.json',c=require('./'+f);c.plugins={CapacitorHttp:{enabled:true}};require('fs').writeFileSync(f,JSON.stringify(c,null,2))"
-      - run: mkdir -p www && cp index.html www/ || true
+      - name: Download Archivo Black
+        run: |
+          F=www/ArchivoBlack-Regular.ttf
+          curl -fsSL -o $F https://github.com/google/fonts/raw/main/ofl/archivoblack/ArchivoBlack-Regular.ttf || curl -fsSL -o $F https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/archivoblack/ArchivoBlack-Regular.ttf || echo "font not downloaded"
+          ls -la www
       - run: npx cap add android && npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
