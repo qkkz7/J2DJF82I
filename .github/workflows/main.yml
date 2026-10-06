@@ -12,6 +12,11 @@ jobs:
       - run: npm init -y && npm i @capacitor/core @capacitor/cli @capacitor/android @capacitor/filesystem @capacitor/share
       - run: npx cap init "Helper" com.helper.qa --web-dir=www
       - run: node -e "const f='capacitor.config.json',c=require('./'+f);c.plugins={CapacitorHttp:{enabled:true}};require('fs').writeFileSync(f,JSON.stringify(c,null,2))"
+      - name: Prepare www
+        run: |
+          mkdir -p www
+          if [ -f index.html ]; then cp index.html www/index.html; fi
+          ls -la www
       - name: Download Archivo Black
         run: |
           F=www/ArchivoBlack-Regular.ttf
