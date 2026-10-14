@@ -407,7 +407,7 @@ function ans(a){
 const isMulti=(it)=>typeof it.a==='string'&&/\n/.test(it.a);
 function cardHtml(id,um){
   const it=S.items[id],u=um&&um.get(id);
-  const multi=isMulti(it)?'<span class="multi">Содержит несколько верных ответов</span>':'';
+  const multi=isMulti(it)?'<span class="multi">Несколько верных</span>':'';
   const base=`<div class="card rc"><div class="chipshead"><span class="bd">${esc(it.c)}</span>${multi}</div>
   <div class="q">${hlText(it.q,u&&u.sel)}</div><div class="lb big">Ответ</div><div class="a">${ans(it.a)}</div>`;
   const key=String(id);
@@ -467,7 +467,7 @@ function viewSet(){
   ${row("font","Шрифт",FONTS[S.pref.font][0])}
   ${row("align","Выравнивание",ALIGNS[S.pref.align]||ALIGNS.left)}
   <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
-  <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
+  <label class="r">Отображать вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
   <div class="div"></div>
   <label class="r">Автопроверка актуальности${chk('au',S.pref.auto)}</label>
   <div class="div"></div>
