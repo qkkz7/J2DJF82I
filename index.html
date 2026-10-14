@@ -4,7 +4,7 @@
 <title>Помощник по вопросам</title>
 <style>
 @font-face{font-family:'Archivo Black';src:url('fonts/ArchivoBlack-Regular.ttf') format('truetype');font-display:swap}
-:root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px}
+:root{--bg:#f6f4fb;--sf:#fff;--tx:#1d1b20;--mu:#6b6775;--ac:#5b3fd1;--ac2:#e9e2ff;--ok:#1b7f4b;--er:#b3261e;--bd:#e3dff0;--fs:16px;--tal:left}
 .kv{display:flex;justify-content:space-between;gap:8px;font-size:0.875rem;min-height:1.5rem}.kv span{color:var(--mu)}
 .hist{padding:8px;max-height:7rem;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}.hist .chip{min-height:2rem;font-size:0.8125rem}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -28,11 +28,11 @@ input[type=search]:focus{outline:0;border-color:var(--ac)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
 .chip{flex:none;min-height:2.5rem;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;font-size:0.875rem}
 .chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
-/* текст вопроса/ответа — выравнивание по ширине, перенос без разрывов длинных слов */
-.q{font-weight:600;text-align:justify;text-justify:inter-word;word-break:break-word;overflow-wrap:anywhere;hyphens:auto}
-.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap;text-align:justify;text-justify:inter-word;word-break:break-word;overflow-wrap:anywhere;hyphens:auto}
+/* Тексты вопросов/ответов — выравнивание по переменной */
+.q{font-weight:600;text-align:var(--tal);word-break:break-word;overflow-wrap:anywhere}
+.a{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--ac2);color:var(--ac);font-size:1.12em;font-weight:600;white-space:pre-wrap;text-align:var(--tal);word-break:break-word;overflow-wrap:anywhere}
 .a ul{margin:0;padding-left:0;list-style:none}
-.a li{padding:2px 0;text-align:justify;text-justify:inter-word}
+.a li{padding:2px 0;text-align:var(--tal)}
 .a li::before{content:'— ';color:var(--ac);font-weight:700}
 .lb{font-size:0.75rem;color:var(--mu);margin-top:8px}
 .lb.big{font-size:1rem;color:var(--mu)}
@@ -47,9 +47,9 @@ input[type=search]:focus{outline:0;border-color:var(--ac)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));background:#322f37;color:#fff;border-radius:14px;padding:12px 16px;opacity:0;pointer-events:none;transition:.2s;text-align:center}
 #toast.on{opacity:1}
 .sw{display:flex;border-radius:24px;background:var(--ac2);padding:3px}.sw button{flex:1;min-height:2.625rem;border:0;border-radius:21px;background:none;color:var(--ac);font:inherit}.sw .on{background:var(--ac);color:#fff}
-label.r{display:flex;justify-content:space-between;align-items:center;min-height:3rem;gap:8px;padding:4px 0}
+label.r{display:flex;justify-content:space-between;align-items:center;min-height:3rem;gap:8px;padding:4px 0;cursor:pointer}
 option{background:var(--sf);color:var(--tx)}
-input[type=checkbox]{accent-color:var(--ac)}
+input[type=checkbox]{accent-color:var(--ac);width:1.5rem;height:1.5rem;flex:none}
 mark{color:inherit;border-radius:4px;padding:0 2px;transition:background .2s}
 .m1{background:var(--m1)}.m2{background:var(--m2)}.m3{background:#d9ef9c;background:color-mix(in srgb,var(--m1) 50%,var(--m2) 50%)}
 .div{height:1px;background:var(--bd);margin:12px 0}
@@ -83,18 +83,12 @@ nav button.on svg{animation:pop .3s}
 .g .btn{padding:6px 10px;font-size:0.875rem;line-height:1.2}
 .tp{background:var(--ac2);color:var(--ac)}
 .tx{flex:1;padding-right:12px}.tx b{display:block}.sub{display:block;font-size:.82rem;line-height:1.3;color:var(--mu);font-weight:400;margin-top:2px}
-/* Универсальный ярлычок сворачивания */
 .sectionhead{display:flex;align-items:center;gap:10px;margin:0 2px 8px;padding:0 4px}
 .sectionhead .lbl{font-weight:700;font-size:0.95rem;color:var(--tx)}
 .sectionhead .tgl{margin-left:auto;width:2.25rem;height:2.25rem;border:1px solid var(--bd);border-radius:12px;background:var(--ac2);color:var(--ac);display:grid;place-items:center;transition:background .2s,transform .12s}
 .sectionhead .tgl:active{transform:scale(.94)}
 .sectionhead .tgl svg{width:1rem;height:1rem;transition:transform .2s}
 .sectionhead .tgl.collapsed svg{transform:rotate(-90deg)}
-/* Поиск с лупой */
-.swrap{position:relative}
-.swrap .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:1.125rem;height:1.125rem;color:var(--mu);pointer-events:none;display:block}
-.swrap .ico path,.swrap .ico circle{stroke:var(--mu)}
-.swrap input[type=search]{padding-left:3rem}
 @keyframes drift{from{background-position:0 0,100% 100%}to{background-position:10% 6%,90% 94%}}
 [data-th=glass] body{background-image:radial-gradient(60% 36% at 12% 6%,#3574F030,transparent 70%),radial-gradient(55% 34% at 95% 100%,#FF6B6822,transparent 70%);background-size:150% 150%;background-repeat:no-repeat;animation:drift 24s ease-in-out infinite alternate}
 [data-th=glass] svg{stroke-width:1.6}
@@ -131,9 +125,9 @@ details.acc>summary{cursor:pointer;list-style:none;padding:10px 12px;font:inheri
 details.acc>summary::-webkit-details-marker{display:none}
 details.acc>summary::after{content:'+';font-size:1.25rem;font-weight:700;color:var(--ac);transition:transform .2s}
 details.acc[open]>summary::after{content:'−'}
-details.acc>.body{padding:0 12px 12px;color:var(--tx);font-weight:400;font-size:0.95rem;white-space:pre-wrap;text-align:justify;text-justify:inter-word;word-break:break-word;overflow-wrap:anywhere;hyphens:auto}
+details.acc>.body{padding:0 12px 12px;color:var(--tx);font-weight:400;font-size:0.95rem;white-space:pre-wrap;text-align:var(--tal);word-break:break-word;overflow-wrap:anywhere}
 details.acc>.body ul{margin:0;padding-left:0;list-style:none}
-details.acc>.body li{padding:4px 0;text-align:justify;text-justify:inter-word}
+details.acc>.body li{padding:4px 0;text-align:var(--tal)}
 details.acc>.body li::before{content:'— ';color:var(--ac);font-weight:700}
 details.acc>.body li + li{border-top:1px solid var(--bd);margin-top:4px;padding-top:8px}
 .hidden{display:none!important}
@@ -213,19 +207,26 @@ dark:['#0f0f0f,#1b1b1b,#f2f2f2,#9a9a9a,#f2f2f2,#2a2a2a,#2c2c2c,#0f0f0f,#6a5f1c,#
 glass:['#141517,#ffffff12,#DCDCDC,#a9acb3,#3574F0,#3574F033,#ffffff1f,#ffffff,#ffd60a55,#30d15855',1],
 sepia:['#f4ecd8,#fbf5e6,#3b2f1e,#7a6a52,#9a5b1f,#efe0c2,#e0d2b4,#ffffff,#f6e08a,#cfe4a8',0],
 gray:['#dcdee1,#eceef0,#1c1e21,#555a60,#3d4b5c,#cdd2d8,#bcc2c9,#ffffff,#f3e58f,#bfe0b8',0]};
+/* Archivo Black убран */
 const FONTS={sys:['Системный','system-ui,sans-serif'],
 serif:['С засечками','"Noto Serif","Droid Serif",Georgia,serif'],
 mono:['Моноширинный','"Roboto Mono","Droid Sans Mono","Courier New",monospace'],
 light:['Тонкий','sans-serif-light,"Roboto Light",sans-serif'],
-casual:['Рукописный','casual,"Coming Soon",cursive'],
-archivo:['Archivo Black','"Archivo Black",system-ui,sans-serif']};
+casual:['Рукописный','casual,"Coming Soon",cursive']};
+const ALIGNS={left:'Слева',justify:'По ширине'};
 
 const dbK=()=>'db_s2';
 const metaK=()=>'meta_s2';
 
+/* Значения по умолчанию — ВСЁ ВКЛЮЧЕНО */
+const DEFAULT_PREF={
+  theme:'auto',font:'sys',fs:16,align:'left',
+  auto:true,hm:true,hu:true,n:10,showV:true,showO:true,
+  hideHist:false
+};
+
 const S={tab:'s',remote:'',retry:'inst',items:[],idx:null,cats:{},cat:'',q:'',lim:10,res:[],hist:[],
-  pref:{theme:'auto',font:'sys',fs:16,auto:true,hm:true,hu:true,n:10,showV:true,showO:true,
-        hideMeta:false,hideHist:false},
+  pref:{...DEFAULT_PREF},
   meta:{},st:null,pend:null,open:{}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -446,20 +447,17 @@ function viewSearch(){
     <button class="tgl ${colH?'collapsed':''}" data-act="tglhist" aria-label="Свернуть">${I.d}</button>
   </div>
   <div class="card hist ${colH?'hidden':''}" id="hist">${histHtml()}</div>
-  <div class="swrap">
-    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
-    <input type="search" id="q" placeholder="Введите слова для поиска" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
-  </div>
+  <input type="search" id="q" placeholder="Введите слова для поиска" value="${esc(S.q)}" aria-label="Поиск" autocomplete="off">
   <div id="res" style="margin-top:12px">${resHtml()}</div>`;
 }
 function viewSet(){
-  const chk=(id,on)=>`<input type="checkbox" id="${id}" ${on?'checked':''}" style="width:1.5rem;height:1.5rem;flex:none">`;
+  const chk=(id,on)=>`<input type="checkbox" id="${id}" ${on?'checked':''}>`;
   const p=S.pend?`<div style="margin-top:12px"><div class="mu">Файл проверен: ${S.pend.out.length} записей${S.pend.bad?', пропущено битых: '+S.pend.bad:''}. Укажите дату актуальности материала (ДД.ММ.ГГГГ):</div>
    <input type="text" id="pd" class="in" inputmode="numeric" placeholder="01.01.2000" maxlength="10"><div class="row"><button class="btn" data-act="psave">Сохранить</button><button class="btn s" data-act="pcancel">Отмена</button></div></div>`:'';
   return `<div class="card">
   <div class="row" style="justify-content:space-between"><b>База данных</b><button class="ib" data-act="clr" aria-label="Очистить базу">${I.t}</button></div>
   <div style="margin-top:8px">${infoRows()}</div>${stat()}
-  <div class="g" style="margin-top:10px"><button class="btn s" data-act="chk">Проверить актуальность</button><button class="btn s" data-act="inst">Установить актуальную БД</button><button class="btn s" data-act="load">Выгрузить БД</button><button class="btn s" data-act="exp">Скачать БД</button></div>${p}
+  <div class="g" style="margin-top:10px"><button class="btn s" data-act="chk">Проверить актуальность БД</button><button class="btn s" data-act="inst">Установить актуальную БД</button><button class="btn s" data-act="load">Выгрузить БД</button><button class="btn s" data-act="exp">Скачать БД</button></div>${p}
   <div class="div"></div>
   ${row("cat","Раздел поиска",S.cat||"Все")}
   <label class="r">Показывать варианты ответов${chk('sv',S.pref.showV)}</label>
@@ -467,10 +465,11 @@ function viewSet(){
   <div class="card"><b>Системные</b>
   ${row("theme","Тема",THEMES[S.pref.theme])}
   ${row("font","Шрифт",FONTS[S.pref.font][0])}
+  ${row("align","Выравнивание",ALIGNS[S.pref.align]||ALIGNS.left)}
   <label class="r">Размер текста: <span id="fsl">${S.pref.fs} px</span><input type="range" id="fs" min="14" max="26" value="${S.pref.fs}" style="width:50%"></label>
   <label class="r">Найденных вопросов: <span id="nl">${S.pref.n}</span><input type="range" id="nn" min="1" max="20" value="${S.pref.n}" style="width:50%"></label>
   <div class="div"></div>
-  <label class="r">Автопроверка актуальности материала${chk('au',S.pref.auto)}</label>
+  <label class="r">Автопроверка актуальности${chk('au',S.pref.auto)}</label>
   <div class="div"></div>
   <label class="r"><span class="tx"><b>Подсветка желтым</b><span class="sub">Слова, совпавшие с введёнными в поиск, подсвечены жёлтым</span></span>${chk('hm',S.pref.hm)}</label>
   <label class="r"><span class="tx"><b>Подсветка зеленым</b><span class="sub">Уникальные для вопроса слова подсвечены зелёным</span></span>${chk('hu',S.pref.hu)}</label>
@@ -492,6 +491,7 @@ function applyPref(){
   r.style.colorScheme=TH[id][1]?'dark':'light';r.dataset.th=id;
   r.style.fontSize=S.pref.fs+'px';
   r.style.setProperty('--ff',(FONTS[S.pref.font]||FONTS.sys)[1]);
+  r.style.setProperty('--tal',S.pref.align==='justify'?'justify':'left');
 }
 const bump=el=>{if(!el)return;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')};
 function paintRanges(){document.querySelectorAll('input[type=range]').forEach(r=>r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%'))}
@@ -504,6 +504,7 @@ function openPick(k){
     const c=(id==='auto'?TH.light:TH[id])[0].split(','),bg=id==='auto'?`linear-gradient(135deg,${c[0]} 50%,${TH.dark[0].split(',')[0]} 50%)`:id==='glass'?'linear-gradient(135deg,#1E1F22,#141517 55%,#3574F0aa)':c[0];
     return `<button class="tile ${S.pref.theme===id?'on':''}" data-pv="theme|${id}"><span class="pv" style="background:${bg};color:${id==='auto'?'#888':c[2]}">Аа<i style="background:${c[4]}"></i></span>${THEMES[id]}</button>`}).join('')+'</div>');
   if(k==='font')return sheet('<h3>Шрифт</h3>'+Object.entries(FONTS).map(([id,[n,f]])=>`<button class="opt ${S.pref.font===id?'on':''}" data-pv="font|${id}" style="font-family:${f}"><span>${n}</span><small>Образец текста: Аа Бб 0123</small></button>`).join(''));
+  if(k==='align')return sheet('<h3>Выравнивание</h3>'+Object.entries(ALIGNS).map(([id,n])=>`<button class="opt ${S.pref.align===id?'on':''}" data-pv="align|${id}" style="text-align:${id}"><span>${n}</span><small>Образец: «Пример текста вопроса и ответа»</small></button>`).join(''));
   if(k==='cat'){const cs=Object.entries(S.cats).sort((a,b)=>b[1]-a[1]);
     return sheet('<h3>Раздел поиска</h3>'+[['',`Все (${S.items.length})`],...cs.map(([c,n])=>[c,`${c} (${n})`])].map(([c,n])=>`<button class="opt ${S.cat===c?'on':''}" data-pv="cat|${esc(c)}">${esc(n)}</button>`).join(''))}
 }
@@ -511,6 +512,15 @@ function go(t,push){S.tab=t;if(push!==false)history.pushState({t},'');render()}
 
 /* ═══ events ═══ */
 let dt;
+/* ГЛАВНОЕ — все переключатели ловим здесь и жёстко связываем с id */
+document.addEventListener('change',e=>{
+  const t=e.target,id=t.id;
+  if(id==='hm'){S.pref.hm=t.checked;savePref();if(S.q)search();render()}
+  else if(id==='hu'){S.pref.hu=t.checked;savePref();if(S.q)search();render()}
+  else if(id==='sv'){S.pref.showV=t.checked;savePref();render()}
+  else if(id==='so'){S.pref.showO=t.checked;savePref();render()}
+  else if(id==='au'){S.pref.auto=t.checked;savePref()}
+});
 document.addEventListener('input',e=>{
   const id=e.target.id;if(e.target.type==='range')paintRanges();if(e.target.type==='range')setP(e.target);
   if(id==='pd'){const d=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=d.slice(0,2)+(d.length>2?'.':'')+d.slice(2,4)+(d.length>4?'.':'')+d.slice(4)}
@@ -518,12 +528,9 @@ document.addEventListener('input',e=>{
     clearTimeout(S.ht);S.ht=setTimeout(()=>{const n=norm(S.q);if(n.length>2&&S.res.length){S.hist=[n,...S.hist.filter(x=>x!==n)].slice(0,15);kvSet('hist',S.hist);const h=$('#hist');if(h)h.innerHTML=histHtml()}},1500)},30)}
   if(id==='fs'){S.pref.fs=+e.target.value;$('#fsl').textContent=S.pref.fs+' px';bump($('#fsl'));applyPref();savePref()}
   if(id==='nn'){S.pref.n=+e.target.value;S.lim=S.pref.n;$('#nl').textContent=S.pref.n;bump($('#nl'));savePref()}
-  if(id==='hm'||id==='hu'){S.pref[id]=e.target.checked;savePref();if(S.q)search()}
-  if(id==='sv'){S.pref.showV=e.target.checked;savePref();render()}
-  if(id==='so'){S.pref.showO=e.target.checked;savePref();render()}
-  if(id==='au'){S.pref.auto=e.target.checked;savePref()}
 });
 document.addEventListener('click',async e=>{
+  /* Клик по label или по самой строке не должен переключать чекбокс дважды */
   const b=e.target.closest('[data-act],[data-tab],[data-h],[data-pv],[data-close],[data-acc]');if(!b)return;
   const d=b.dataset;
   if(d.tab)return go(d.tab);
@@ -533,6 +540,7 @@ document.addEventListener('click',async e=>{
   if(d.pv){const i=d.pv.indexOf('|'),k=d.pv.slice(0,i),v=d.pv.slice(i+1);
     if(k==='theme'){S.pref.theme=v;applyPref();savePref()}
     if(k==='font'){S.pref.font=v;applyPref();savePref()}
+    if(k==='align'){S.pref.align=v;applyPref();savePref()}
     if(k==='cat'){S.cat=v;S.lim=S.pref.n;search()}
     vib();closeSheet();render();return}
   switch(d.act){
@@ -573,12 +581,14 @@ window.addEventListener('popstate',()=>{if($('#sh').classList.contains('on')){cl
   S.loading=true;render();
   try{
     S.meta=(await kvGet(metaK()))||{};
-    S.hist=(await kvGet('hist'))||[];Object.assign(S.pref,await kvGet('pref')||{});
+    S.hist=(await kvGet('hist'))||[];
+    /* pref подтягиваем и сливаем с DEFAULT_PREF, чтобы дефолты были true */
+    const loaded=await kvGet('pref')||{};
+    S.pref=Object.assign({},DEFAULT_PREF,loaded);
     if(S.pref.theme==='blue')S.pref.theme='glass';
     if(!THEMES[S.pref.theme])S.pref.theme='auto';
     if(!FONTS[S.pref.font])S.pref.font='sys';
-    if(S.pref.showV===undefined)S.pref.showV=true;
-    if(S.pref.showO===undefined)S.pref.showO=true;
+    if(!ALIGNS[S.pref.align])S.pref.align='left';
     if(S.pref.hideHist===undefined)S.pref.hideHist=false;
     applyPref();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyPref);S.lim=S.pref.n;
     await loadActive();
