@@ -16,6 +16,7 @@ jobs:
         run: |
           mkdir -p www
           if [ -f index.html ]; then cp index.html www/index.html; fi
+          if [ -f db.json ]; then cp db.json www/db.json; fi
           ls -la www
       - name: Download Archivo Black
         run: |
